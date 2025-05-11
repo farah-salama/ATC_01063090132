@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
-  Paper,
   Typography,
   Button,
   Box,
@@ -15,8 +14,11 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+import theme from '../theme';
+import EventyButton from '../common/EventyButton';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const { accent, dark, gray, cardBg, cardShadow, gradientBg } = theme;
 
 const EventDetails = () => {
   const [event, setEvent] = useState(null);
@@ -77,13 +79,8 @@ const EventDetails = () => {
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="60vh"
-      >
-        <CircularProgress />
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+        <CircularProgress sx={{ color: accent }} />
       </Box>
     );
   }
@@ -103,96 +100,118 @@ const EventDetails = () => {
   }
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Box sx={{ position: 'relative' }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: gradientBg,
+        py: 6,
+        px: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <Container
+        maxWidth="md"
+        sx={{
+          background: cardBg,
+          borderRadius: '32px',
+          boxShadow: cardShadow,
+          px: { xs: 2, sm: 6 },
+          py: { xs: 3, sm: 6 },
+          mb: 4,
+        }}
+      >
+        <Box sx={{ position: 'relative', mb: 3 }}>
           <img
             src={event.image || 'https://via.placeholder.com/800x400'}
             alt={event.name}
             style={{
               width: '100%',
-              height: '400px',
+              height: '340px',
               objectFit: 'cover',
-              borderRadius: '4px',
+              borderRadius: '24px',
+              boxShadow: cardShadow,
             }}
           />
           <Chip
             label={event.category}
-            color="primary"
             sx={{
               position: 'absolute',
               top: 16,
               right: 16,
+              background: accent,
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: '1rem',
+              borderRadius: '12px',
+              px: 2,
+              py: 1,
             }}
           />
         </Box>
-
-        <Typography variant="h4" component="h1" gutterBottom sx={{ mt: 3 }}>
+        <Typography variant="h4" component="h1" align="center" sx={{ color: dark, fontWeight: 700, mb: 2 }}>
           {event.name}
         </Typography>
-
-        <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-          <Typography variant="body1" color="text.secondary">
-            Date: {new Date(event.date).toLocaleDateString()}
+        <Box sx={{ display: 'flex', gap: 3, mb: 3, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <span role="img" aria-label="calendar">📅</span> {new Date(event.date).toLocaleDateString()}
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Venue: {event.venue}
+          <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <span role="img" aria-label="location">📍</span> {event.venue}
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Price: ${event.price}
+          <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <span role="img" aria-label="price">💵</span> ${event.price}
           </Typography>
         </Box>
-
-        <Typography variant="body1" paragraph>
+        <Typography align="center" sx={{ color: gray, mb: 3, fontSize: '1.1rem' }}>
           {event.description}
         </Typography>
-
         {isBooked ? (
           <Box sx={{ mt: 3, textAlign: 'center' }}>
             <Chip
               label="Booked"
-              color="success"
-              sx={{ fontSize: '1.1rem', padding: '20px 10px' }}
+              sx={{
+                background: dark,
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: '1.1rem',
+                borderRadius: '999px',
+                px: 4,
+                py: 1.2,
+                mb: 1,
+              }}
             />
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            <Typography variant="body2" sx={{ color: gray, mt: 1 }}>
               You have successfully booked this event
             </Typography>
           </Box>
         ) : (
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            fullWidth
-            onClick={handleBookNow}
-            sx={{ mt: 3 }}
-          >
-            Book Now
-          </Button>
+          <EventyButton onClick={handleBookNow} sx={{ width: '100%', mt: 3 }}>Book Now</EventyButton>
         )}
-      </Paper>
-
+      </Container>
       <Dialog open={showSuccess} onClose={() => setShowSuccess(false)}>
-        <DialogTitle>Booking Successful!</DialogTitle>
+        <DialogTitle sx={{ color: accent, fontWeight: 700 }}>Booking Successful!</DialogTitle>
         <DialogContent>
-          <Typography>
+          <Typography sx={{ color: gray }}>
             You have successfully booked this event. You can view your bookings in the "My Bookings" section.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowSuccess(false)}>Close</Button>
-          <Button
+          <EventyButton variant="text" onClick={() => setShowSuccess(false)} sx={{ color: accent, fontWeight: 700 }}>Close</EventyButton>
+          <EventyButton
+            variant="text"
             onClick={() => {
               setShowSuccess(false);
               navigate('/booked-events');
             }}
-            color="primary"
+            sx={{ color: accent, fontWeight: 700 }}
           >
             View My Bookings
-          </Button>
+          </EventyButton>
         </DialogActions>
       </Dialog>
-    </Container>
+    </Box>
   );
 };
 

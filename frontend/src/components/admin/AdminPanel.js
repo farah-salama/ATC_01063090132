@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Container,
   Typography,
-  Button,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -15,8 +14,11 @@ import {
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import axios from 'axios';
+import theme from '../theme';
+import EventyButton from '../common/EventyButton';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const { accent, dark, gray, cardBg, cardShadow, gradientBg } = theme;
 
 const AdminPanel = () => {
   const [events, setEvents] = useState([]);
@@ -108,138 +110,178 @@ const AdminPanel = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
-        <Typography variant="h4" component="h1">
-          Event Management
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleOpen()}
-        >
-          Add New Event
-        </Button>
-      </Box>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: gradientBg,
+        py: 6,
+        px: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <Container maxWidth="md"
+        sx={{
+          background: cardBg,
+          borderRadius: '32px',
+          boxShadow: cardShadow,
+          px: { xs: 2, sm: 6 },
+          py: { xs: 3, sm: 6 },
+          mb: 4,
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4, alignItems: 'center' }}>
+          <Typography variant="h4" component="h1" sx={{ color: dark, fontWeight: 700 }}>
+            Event Management
+          </Typography>
+          <EventyButton onClick={() => handleOpen()}>Add New Event</EventyButton>
+        </Box>
 
-      <Grid container spacing={3}>
-        {events.map((event) => (
-          <Grid item xs={12} key={event._id}>
-            <Paper sx={{ p: 2 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
-                  <Typography variant="h6">{event.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {event.category} • {new Date(event.date).toLocaleDateString()} • ${event.price}
-                  </Typography>
+        <Grid container spacing={4}>
+          {events.map((event) => (
+            <Grid item xs={12} key={event._id}>
+              <Paper
+                sx={{
+                  p: 2,
+                  background: cardBg,
+                  borderRadius: '24px',
+                  boxShadow: cardShadow,
+                  mb: 2,
+                  border: 'none',
+                }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box>
+                    <Typography variant="h6" sx={{ color: accent, fontWeight: 700 }}>
+                      {event.name}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: gray, fontWeight: 500 }}>
+                      {event.category} • {new Date(event.date).toLocaleDateString()} • ${event.price}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <IconButton onClick={() => handleOpen(event)} sx={{ color: accent }}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton onClick={() => handleDelete(event._id)} sx={{ color: '#ff7675' }}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
                 </Box>
-                <Box>
-                  <IconButton onClick={() => handleOpen(event)} color="primary">
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton onClick={() => handleDelete(event._id)} color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              </Box>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
-
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          {editingEvent ? 'Edit Event' : 'Add New Event'}
-        </DialogTitle>
-        <form onSubmit={handleSubmit}>
-          <DialogContent>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Event Name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  multiline
-                  rows={4}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Date"
-                  name="date"
-                  type="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  InputLabelProps={{ shrink: true }}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Venue"
-                  name="venue"
-                  value={formData.venue}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Price"
-                  name="price"
-                  type="number"
-                  value={formData.price}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Image URL"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
+              </Paper>
             </Grid>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit" variant="contained" color="primary">
-              {editingEvent ? 'Update' : 'Create'}
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
-    </Container>
+          ))}
+        </Grid>
+
+        <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth
+          PaperProps={{
+            sx: {
+              background: cardBg,
+              borderRadius: '24px',
+              boxShadow: cardShadow,
+              p: 2,
+            },
+          }}
+        >
+          <DialogTitle sx={{ color: accent, fontWeight: 700 }}>
+            {editingEvent ? 'Edit Event' : 'Add New Event'}
+          </DialogTitle>
+          <form onSubmit={handleSubmit}>
+            <DialogContent>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Event Name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    sx={{ background: '#f6f6fa', borderRadius: 2 }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    multiline
+                    rows={4}
+                    required
+                    sx={{ background: '#f6f6fa', borderRadius: 2 }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                    sx={{ background: '#f6f6fa', borderRadius: 2 }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Date"
+                    name="date"
+                    type="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    InputLabelProps={{ shrink: true }}
+                    required
+                    sx={{ background: '#f6f6fa', borderRadius: 2 }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Venue"
+                    name="venue"
+                    value={formData.venue}
+                    onChange={handleChange}
+                    required
+                    sx={{ background: '#f6f6fa', borderRadius: 2 }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Price"
+                    name="price"
+                    type="number"
+                    value={formData.price}
+                    onChange={handleChange}
+                    required
+                    sx={{ background: '#f6f6fa', borderRadius: 2 }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Image URL"
+                    name="image"
+                    value={formData.image}
+                    onChange={handleChange}
+                    required
+                    sx={{ background: '#f6f6fa', borderRadius: 2 }}
+                  />
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions>
+              <EventyButton variant="text" onClick={handleClose} sx={{ color: accent, fontWeight: 700 }}>Cancel</EventyButton>
+              <EventyButton type="submit">{editingEvent ? 'Update' : 'Create'}</EventyButton>
+            </DialogActions>
+          </form>
+        </Dialog>
+      </Container>
+    </Box>
   );
 };
 

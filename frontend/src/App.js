@@ -9,6 +9,7 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import AdminPanel from './components/admin/AdminPanel';
 import BookedEvents from './components/pages/BookedEvents';
+import Profile from './components/pages/Profile';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/routing/PrivateRoute';
 import AdminRoute from './components/routing/AdminRoute';
@@ -57,6 +58,14 @@ function App() {
                 <AdminRoute>
                   <AdminPanel />
                 </AdminRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
               }
             />
             <Route path="*" element={<Navigate to="/" replace />} />
