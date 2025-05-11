@@ -23,26 +23,28 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchUserData = async (token) => {
+    try {
+      const res = await axios.get(`${API_URL}/api/auth/me`);
+      setUser(res.data);
+      return true;
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      if (error.response?.status !== 401) {
+        localStorage.removeItem('token');
+        delete axios.defaults.headers.common['Authorization'];
+      }
+      return false;
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // Fetch user data
-      axios.get(`${API_URL}/api/auth/me`)
-        .then(res => {
-          setUser(res.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching user data:', error);
-          if (error.response?.status !== 401) {
-            // Only remove token if it's not an auth error (handled by interceptor)
-            localStorage.removeItem('token');
-            delete axios.defaults.headers.common['Authorization'];
-          }
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      fetchUserData(token).finally(() => {
+        setLoading(false);
+      });
     } else {
       setLoading(false);
     }
@@ -54,10 +56,18 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
-      const { token, user } = res.data;
+      const { token, _id, name, email: userEmail, role } = res.data;
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
+      
+      // Create user object from response data
+      const userData = {
+        _id,
+        name,
+        email: userEmail,
+        role
+      };
+      setUser(userData);
       return { success: true };
     } catch (error) {
       return {
@@ -74,10 +84,18 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
-      const { token, user } = res.data;
+      const { token, _id, name: userName, email: userEmail, role } = res.data;
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
+      
+      // Create user object from response data
+      const userData = {
+        _id,
+        name: userName,
+        email: userEmail,
+        role
+      };
+      setUser(userData);
       return { success: true };
     } catch (error) {
       return {

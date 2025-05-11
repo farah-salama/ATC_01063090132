@@ -20,7 +20,7 @@ const Register = () => {
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, user } = useAuth();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,11 +37,16 @@ const Register = () => {
 
     const result = await register(formData.name, formData.email, formData.password);
     if (result.success) {
-      navigate('/');
+      navigate('/', { replace: true });
     } else {
       setError(result.error);
     }
   };
+
+  if (user) {
+    navigate('/', { replace: true });
+    return null;
+  }
 
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>

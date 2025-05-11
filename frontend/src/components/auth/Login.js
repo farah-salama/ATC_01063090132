@@ -18,7 +18,7 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,11 +30,18 @@ const Login = () => {
 
     const result = await login(formData.email, formData.password);
     if (result.success) {
-      navigate('/');
+      // The user state will be updated automatically through the AuthContext
+      navigate('/', { replace: true });
     } else {
       setError(result.error);
     }
   };
+
+  // If user is already logged in, redirect to home
+  if (user) {
+    navigate('/', { replace: true });
+    return null;
+  }
 
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
