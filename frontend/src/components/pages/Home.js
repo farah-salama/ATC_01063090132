@@ -47,7 +47,7 @@ const Home = () => {
     fetchBookedEvents();
   }, [isAuthenticated]);
 
-  const handleBookNow = (eventId) => {
+  const handleViewDetails = (eventId) => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
@@ -116,10 +116,10 @@ const Home = () => {
                     fullWidth
                     variant="contained"
                     color="primary"
-                    onClick={() => handleBookNow(event._id)}
+                    onClick={() => handleViewDetails(event._id)}
                     sx={{ mt: 2 }}
                   >
-                    Book Now
+                    View Details
                   </Button>
                 )}
               </CardContent>

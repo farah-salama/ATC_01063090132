@@ -8,6 +8,7 @@ import EventDetails from './components/pages/EventDetails';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import AdminPanel from './components/admin/AdminPanel';
+import BookedEvents from './components/pages/BookedEvents';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/routing/PrivateRoute';
 import AdminRoute from './components/routing/AdminRoute';
@@ -39,6 +40,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <EventDetails />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/booked-events"
+              element={
+                <PrivateRoute>
+                  <BookedEvents />
                 </PrivateRoute>
               }
             />

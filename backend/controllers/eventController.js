@@ -1,4 +1,5 @@
 const Event = require('../models/eventModel');
+const Booking = require('../models/bookingModel');
 const { validationResult } = require('express-validator');
 
 // @desc    Create a new event
@@ -76,8 +77,13 @@ const deleteEvent = async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
+    // Delete all bookings associated with this event
+    await Booking.deleteMany({ event: req.params.id });
+
+    // Delete the event
     await event.deleteOne();
-    res.json({ message: 'Event removed' });
+    
+    res.json({ message: 'Event and associated bookings removed' });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

@@ -38,6 +38,14 @@ const Navbar = () => {
           <Box>
             {isAuthenticated ? (
               <>
+                <Button
+                  color="inherit"
+                  component={RouterLink}
+                  to="/booked-events"
+                  sx={{ mr: 2 }}
+                >
+                  My Bookings
+                </Button>
                 {isAdmin && (
                   <Button
                     color="inherit"
