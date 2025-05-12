@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link as RouterLink, useLocation } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -8,6 +8,7 @@ import {
   Link,
   Box,
   Paper,
+  Alert,
 } from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
 import theme from '../theme';
@@ -21,22 +22,62 @@ const Login = () => {
     password: '',
   });
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({
+    email: '',
+    password: '',
+  });
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, user } = useAuth();
 
+  // Check for error message in location state
+  useEffect(() => {
+    if (location.state?.error) {
+      setError(location.state.error);
+      // Clear the error from location state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Only clear field-specific errors when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setFieldErrors({ email: '', password: '' });
+
+    // Validate email format
+    if (!validateEmail(formData.email)) {
+      setFieldErrors(prev => ({ ...prev, email: 'Please enter a valid email address' }));
+      return;
+    }
+
+    // Validate password is not empty
+    if (!formData.password) {
+      setFieldErrors(prev => ({ ...prev, password: 'Password is required' }));
+      return;
+    }
 
     const result = await login(formData.email, formData.password);
     if (result.success) {
       navigate('/', { replace: true });
     } else {
       setError(result.error);
+      // Keep the form data when there's an error
+      setFormData(prev => ({ ...prev }));
     }
   };
 
@@ -73,9 +114,9 @@ const Login = () => {
             Login
           </Typography>
           {error && (
-            <Typography color="error" align="center" gutterBottom>
+            <Alert severity="error" sx={{ mb: 2 }}>
               {error}
-            </Typography>
+            </Alert>
           )}
           <form onSubmit={handleSubmit}>
             <TextField
@@ -87,6 +128,8 @@ const Login = () => {
               onChange={handleChange}
               margin="normal"
               required
+              error={!!fieldErrors.email}
+              helperText={fieldErrors.email}
               sx={{ background: '#f6f6fa', borderRadius: 2 }}
             />
             <TextField
@@ -98,6 +141,8 @@ const Login = () => {
               onChange={handleChange}
               margin="normal"
               required
+              error={!!fieldErrors.password}
+              helperText={fieldErrors.password}
               sx={{ background: '#f6f6fa', borderRadius: 2 }}
             />
             <EventyButton type="submit" fullWidth sx={{ mt: 3 }}>Login</EventyButton>

@@ -22,16 +22,63 @@ const Register = () => {
     confirmPassword: '',
   });
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
   const navigate = useNavigate();
   const { register, user } = useAuth();
 
+  const validateName = (name) => {
+    return name.length >= 2;
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    return passwordRegex.test(password);
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    
+    // Clear field-specific errors when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setFieldErrors({ name: '', email: '', password: '' });
+
+    // Validate name
+    if (!validateName(formData.name)) {
+      setFieldErrors(prev => ({ ...prev, name: 'Name must be at least 2 characters long' }));
+      return;
+    }
+
+    // Validate email format
+    if (!validateEmail(formData.email)) {
+      setFieldErrors(prev => ({ ...prev, email: 'Please enter a valid email address' }));
+      return;
+    }
+
+    // Validate password
+    if (!validatePassword(formData.password)) {
+      setFieldErrors(prev => ({ 
+        ...prev, 
+        password: 'Password must be at least 6 characters long and contain at least one letter and one number' 
+      }));
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
@@ -92,6 +139,8 @@ const Register = () => {
               onChange={handleChange}
               margin="normal"
               required
+              error={!!fieldErrors.name}
+              helperText={fieldErrors.name}
               sx={{ background: '#f6f6fa', borderRadius: 2 }}
             />
             <TextField
@@ -103,6 +152,8 @@ const Register = () => {
               onChange={handleChange}
               margin="normal"
               required
+              error={!!fieldErrors.email}
+              helperText={fieldErrors.email}
               sx={{ background: '#f6f6fa', borderRadius: 2 }}
             />
             <TextField
@@ -114,6 +165,8 @@ const Register = () => {
               onChange={handleChange}
               margin="normal"
               required
+              error={!!fieldErrors.password}
+              helperText={fieldErrors.password}
               sx={{ background: '#f6f6fa', borderRadius: 2 }}
             />
             <TextField
