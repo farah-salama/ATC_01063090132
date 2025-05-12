@@ -19,7 +19,7 @@ import EventyButton from '../common/EventyButton';
 const { accent, dark, cardBg, cardShadow } = theme;
 
 const Navbar = () => {
-  const { isAuthenticated, isAdmin, logout } = useAuth();
+  const { isAuthenticated, isAdmin, logout, user } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -41,6 +41,7 @@ const Navbar = () => {
       <Container maxWidth="lg">
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', py: 2 }}>
           <Typography
+            className="logo"
             variant="h4"
             component={RouterLink}
             to="/"
@@ -48,7 +49,6 @@ const Navbar = () => {
               textDecoration: 'none',
               color: accent,
               fontWeight: 900,
-              fontFamily: '"Playwrite DK Loopet", cursive',
               letterSpacing: 1,
             }}
           >
@@ -57,6 +57,9 @@ const Navbar = () => {
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
             {isAuthenticated ? (
               <>
+                {isAdmin && (
+                  <EventyButton component={RouterLink} to="/admin">Admin Panel</EventyButton>
+                )}
                 <IconButton
                   onClick={handleMenu}
                   sx={{
@@ -68,6 +71,11 @@ const Navbar = () => {
                   }}
                 >
                   <AccountCircle fontSize="large" />
+                  {user && (
+                    <Typography component="span" sx={{ ml: 1, fontWeight: 400, color: dark, fontFamily: 'Lato, Arial, sans-serif', fontSize: '1.1rem', textTransform: 'capitalize' }}>
+                      {user.name}
+                    </Typography>
+                  )}
                   <ArrowDropDown fontSize="large" />
                 </IconButton>
                 <Menu
@@ -76,37 +84,95 @@ const Navbar = () => {
                   onClose={handleClose}
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  autoFocusItem={false}
                   PaperProps={{
                     sx: {
                       mt: 1,
-                      minWidth: 180,
+                      minWidth: 200,
                       borderRadius: 3,
                       boxShadow: cardShadow,
+                      border: '1.5px solid #ede7f6',
+                      background: '#faf7ff',
+                      p: 1,
+                    },
+                  }}
+                  MenuListProps={{
+                    sx: {
+                      p: 0,
                     },
                   }}
                 >
-                  <MenuItem component={RouterLink} to="/profile" onClick={handleClose}>
-                    <ListItemIcon>
+                  <MenuItem component={RouterLink} to="/profile" onClick={handleClose} autoFocus={false} sx={{
+                    borderRadius: 2,
+                    mb: 1,
+                    px: 2.5,
+                    py: 1.2,
+                    fontWeight: 400,
+                    fontFamily: 'Lato, Arial, sans-serif',
+                    color: dark,
+                    '&:hover, &:focus-visible': {
+                      background: accent,
+                      color: '#fff',
+                      '.MuiListItemIcon-root': { color: '#fff' },
+                    },
+                    '&.Mui-focusVisible:not(:hover)': {
+                      background: accent,
+                      color: '#fff',
+                      '.MuiListItemIcon-root': { color: '#fff' },
+                    },
+                  }}>
+                    <ListItemIcon sx={{ color: accent }}>
                       <AccountCircle fontSize="small" />
                     </ListItemIcon>
                     View My Profile
                   </MenuItem>
-                  <MenuItem component={RouterLink} to="/booked-events" onClick={handleClose}>
-                    <ListItemIcon>
+                  <MenuItem component={RouterLink} to="/booked-events" onClick={handleClose} autoFocus={false} sx={{
+                    borderRadius: 2,
+                    mb: 1,
+                    px: 2.5,
+                    py: 1.2,
+                    fontWeight: 400,
+                    fontFamily: 'Lato, Arial, sans-serif',
+                    '&:hover, &:focus-visible': {
+                      background: accent,
+                      color: '#fff',
+                      '.MuiListItemIcon-root': { color: '#fff' },
+                    },
+                    '&.Mui-focusVisible:not(:hover)': {
+                      background: accent,
+                      color: '#fff',
+                      '.MuiListItemIcon-root': { color: '#fff' },
+                    },
+                  }}>
+                    <ListItemIcon sx={{ color: accent }}>
                       <EventNote fontSize="small" />
                     </ListItemIcon>
                     My Bookings
                   </MenuItem>
-                  <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
-                    <ListItemIcon>
+                  <MenuItem onClick={handleLogout} autoFocus={false} sx={{
+                    borderRadius: 2,
+                    px: 2.5,
+                    py: 1.2,
+                    fontWeight: 400,
+                    fontFamily: 'Lato, Arial, sans-serif',
+                    color: 'error.main',
+                    '&:hover, &:focus-visible': {
+                      background: '#ffeaea',
+                      color: 'error.main',
+                      '.MuiListItemIcon-root': { color: 'error.main' },
+                    },
+                    '&.Mui-focusVisible:not(:hover)': {
+                      background: '#ffeaea',
+                      color: 'error.main',
+                      '.MuiListItemIcon-root': { color: 'error.main' },
+                    },
+                  }}>
+                    <ListItemIcon sx={{ color: 'error.main' }}>
                       <LogoutIcon fontSize="small" />
                     </ListItemIcon>
                     Logout
                   </MenuItem>
                 </Menu>
-                {isAdmin && (
-                  <EventyButton component={RouterLink} to="/admin">Admin Panel</EventyButton>
-                )}
               </>
             ) : (
               <>

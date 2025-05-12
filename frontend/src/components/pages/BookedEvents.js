@@ -16,6 +16,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import theme from '../theme';
 import EventyButton from '../common/EventyButton';
+import { CalendarToday, LocationOn } from '@mui/icons-material';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const { accent, dark, gray, cardBg, cardShadow, gradientBg } = theme;
@@ -146,10 +147,10 @@ const BookedEvents = () => {
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 2, flexWrap: 'wrap' }}>
                       <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <span role="img" aria-label="calendar">📅</span> {new Date(booking.event.date).toLocaleDateString()}
+                        <CalendarToday sx={{ color: accent, fontSize: '1.2rem' }} /> {new Date(booking.event.date).toLocaleDateString()}
                       </Typography>
                       <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <span role="img" aria-label="location">📍</span> {booking.event.venue}
+                        <LocationOn sx={{ color: accent, fontSize: '1.2rem' }} /> {booking.event.venue}
                       </Typography>
                     </Box>
                     <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>

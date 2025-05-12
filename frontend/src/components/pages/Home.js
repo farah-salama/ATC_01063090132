@@ -14,6 +14,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import theme from '../theme';
 import EventyButton from '../common/EventyButton';
+import { CalendarToday, AccessTime, LocationOn, AttachMoney } from '@mui/icons-material';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -51,6 +52,14 @@ const Home = () => {
   }, [isAuthenticated]);
 
   const handleViewDetails = (eventId) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    navigate(`/event/${eventId}`);
+  };
+
+  const handleBookNow = async (eventId) => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
@@ -108,53 +117,86 @@ const Home = () => {
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
-                  background: cardBg,
-                  borderRadius: '24px',
-                  boxShadow: cardShadow,
-                  p: 2,
+                  background: 'rgba(255,255,255,0.95)',
+                  borderRadius: '28px',
+                  boxShadow: '0 4px 24px 0 rgba(80, 80, 180, 0.10)',
+                  p: { xs: 1, sm: 3 },
                   mb: 2,
-                  border: 'none',
+                  border: '1.5px solid #f0f0f0',
+                  minHeight: 180,
+                  transition: 'box-shadow 0.2s',
+                  '&:hover': {
+                    boxShadow: '0 8px 32px 0 rgba(80, 80, 180, 0.18)',
+                  },
                 }}
               >
-                <CardMedia
-                  component="img"
-                  image={event.image || 'https://via.placeholder.com/120x120'}
-                  alt={event.name}
-                  sx={{
-                    width: 120,
-                    height: 120,
-                    borderRadius: '16px',
-                    objectFit: 'cover',
-                    mr: 3,
-                  }}
-                />
-                <CardContent sx={{ flex: 1, p: 0 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 2, flexWrap: 'wrap' }}>
+                <Box sx={{ flex: '0 0 180px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: 160 }}>
+                  <CardMedia
+                    component="img"
+                    image={event.image || 'https://via.placeholder.com/160x160'}
+                    alt={event.name}
+                    sx={{
+                      width: 160,
+                      height: 160,
+                      borderRadius: '18px',
+                      objectFit: 'cover',
+                      boxShadow: '0 2px 12px 0 rgba(80, 80, 180, 0.08)',
+                    }}
+                  />
+                </Box>
+                <CardContent sx={{ flex: 1, p: { xs: 1, sm: 2 }, pl: { xs: 2, sm: 4 } }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 3, flexWrap: 'wrap' }}>
                     <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <span role="img" aria-label="calendar">📅</span> {new Date(event.date).toLocaleDateString()}
+                      <CalendarToday sx={{ color: accent, fontSize: '1.2rem' }} /> {new Date(event.date).toLocaleDateString()}
                     </Typography>
                     <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <span role="img" aria-label="clock">🕒</span> 10.00 AM - 11.30 AM
+                      <AccessTime sx={{ color: accent, fontSize: '1.2rem' }} /> 10.00 AM
                     </Typography>
                     <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <span role="img" aria-label="location">📍</span> {event.venue}
+                      <LocationOn sx={{ color: accent, fontSize: '1.2rem' }} /> {event.venue}
+                    </Typography>
+                    <Typography sx={{ color: accent, fontWeight: 700, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <AttachMoney sx={{ color: accent, fontSize: '1.2rem' }} /> {event.price}
                     </Typography>
                   </Box>
                   <Typography
-                    variant="h6"
-                    sx={{ color: accent, fontWeight: 700, mb: 1, fontSize: '1.2rem', cursor: 'pointer', textDecoration: 'none' }}
+                    variant="h5"
+                    sx={{ color: accent, fontWeight: 600, mb: 1, fontSize: { xs: '1.3rem', sm: '1.7rem' }, cursor: 'pointer', textDecoration: 'none', lineHeight: 1.2 }}
                     onClick={() => handleViewDetails(event._id)}
                   >
                     {event.name}
                   </Typography>
-                  <Typography sx={{ color: gray, mb: 2, fontSize: '1rem' }}>
+                  <Typography sx={{ color: gray, mb: 2, fontSize: '1.08rem', maxWidth: 600 }}>
                     {event.description}
                   </Typography>
-                  {bookedEvents.includes(event._id) ? (
-                    <EventyButton disabled>Booked</EventyButton>
-                  ) : (
-                    <EventyButton onClick={() => handleViewDetails(event._id)}>Get a Ticket</EventyButton>
-                  )}
+                  <Box sx={{ mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
+                    {bookedEvents.includes(event._id) ? (
+                      <EventyButton disabled sx={{ fontFamily: 'Lato, Arial, sans-serif', fontWeight: 700, fontSize: '1rem', px: 4, py: 1.2, borderRadius: '24px', background: '#23272f', color: '#fff' }}>Booked</EventyButton>
+                    ) : (
+                      <>
+                        <EventyButton onClick={() => handleBookNow(event._id)} sx={{ fontFamily: 'Lato, Arial, sans-serif', fontWeight: 700, fontSize: '1rem', px: 4, py: 1.2, borderRadius: '24px', background: '#23272f', color: '#fff', '&:hover': { background: '#181b20' } }}>Book Now</EventyButton>
+                        <Box
+                          component="button"
+                          onClick={() => handleViewDetails(event._id)}
+                          sx={{
+                            ml: 1,
+                            background: 'none',
+                            border: 'none',
+                            color: accent,
+                            fontWeight: 700,
+                            fontFamily: 'Lato, Arial, sans-serif',
+                            fontSize: '1.2rem',
+                            cursor: 'pointer',
+                            textDecoration: 'none',
+                            transition: 'color 0.2s',
+                            '&:hover': { color: dark },
+                          }}
+                        >
+                          More Info
+                        </Box>
+                      </>
+                    )}
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>

@@ -16,6 +16,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import theme from '../theme';
 import EventyButton from '../common/EventyButton';
+import { CalendarToday, LocationOn, AttachMoney } from '@mui/icons-material';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const { accent, dark, gray, cardBg, cardShadow, gradientBg } = theme;
@@ -155,13 +156,13 @@ const EventDetails = () => {
         </Typography>
         <Box sx={{ display: 'flex', gap: 3, mb: 3, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <span role="img" aria-label="calendar">📅</span> {new Date(event.date).toLocaleDateString()}
+            <CalendarToday sx={{ color: accent, fontSize: '1.2rem' }} /> {new Date(event.date).toLocaleDateString()}
           </Typography>
           <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <span role="img" aria-label="location">📍</span> {event.venue}
+            <LocationOn sx={{ color: accent, fontSize: '1.2rem' }} /> {event.venue}
           </Typography>
           <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <span role="img" aria-label="price">💵</span> ${event.price}
+            <AttachMoney sx={{ color: accent, fontSize: '1.2rem' }} />{event.price}
           </Typography>
         </Box>
         <Typography align="center" sx={{ color: gray, mb: 3, fontSize: '1.1rem' }}>
@@ -172,7 +173,7 @@ const EventDetails = () => {
             <Chip
               label="Booked"
               sx={{
-                background: dark,
+                background: '#23272f',
                 color: '#fff',
                 fontWeight: 700,
                 fontSize: '1.1rem',
@@ -187,7 +188,7 @@ const EventDetails = () => {
             </Typography>
           </Box>
         ) : (
-          <EventyButton onClick={handleBookNow} sx={{ width: '100%', mt: 3 }}>Book Now</EventyButton>
+          <EventyButton onClick={handleBookNow} sx={{ width: '100%', mt: 3, background: '#23272f', color: '#fff', '&:hover': { background: '#181b20' } }}>Book Now</EventyButton>
         )}
       </Container>
       <Dialog open={showSuccess} onClose={() => setShowSuccess(false)}>

@@ -1,8 +1,11 @@
+body, *:not(.logo) {
+  font-family: 'Lato', Arial, sans-serif !important;
+}
+
 body {
-  font-family: 'Josefin Sans', 'Raleway', 'Varela Round', Arial, sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
-  font-weight: 100;
+  font-weight: 400;
   background: #fff;
   margin: 0;
   padding: 0;
@@ -17,6 +20,10 @@ code {
 
 /* Optionally, set a default font for all MUI Typography */
 .MuiTypography-root {
-  font-family: 'Josefin Sans', 'Raleway', 'Varela Round', Arial, sans-serif;
-  font-weight: 100;
+  font-weight: 400;
+}
+
+/* Exclude the logo from the global font family */
+.logo, .logo * {
+  font-family: "Playwrite DK Loopet", cursive !important;
 }

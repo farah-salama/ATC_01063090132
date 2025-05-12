@@ -8,7 +8,7 @@ const EventyButton = ({ children, variant = 'contained', sx = {}, ...props }) =>
   <Button
     variant={variant}
     sx={{
-      background: variant === 'contained' ? dark : 'transparent',
+      background: variant === 'contained' ? '#23272f' : 'transparent',
       color: variant === 'contained' ? '#fff' : accent,
       borderRadius: '999px',
       fontWeight: 700,
@@ -16,10 +16,10 @@ const EventyButton = ({ children, variant = 'contained', sx = {}, ...props }) =>
       py: 0.6,
       boxShadow: 'none',
       textTransform: 'uppercase',
-      fontSize: '1rem',
+      fontSize: '1.2rem',
       letterSpacing: 1,
       '&:hover': {
-        background: variant === 'contained' ? accent : 'rgba(153,48,227,0.08)',
+        background: variant === 'contained' ? '#181b20' : 'rgba(153,48,227,0.08)',
         color: '#fff',
       },
       ...sx,
