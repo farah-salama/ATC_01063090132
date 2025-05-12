@@ -29,7 +29,7 @@ const EventDetails = () => {
   const [isBooked, setIsBooked] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated, loading: authLoading, isAdmin } = useAuth();
   const confettiFired = useRef(false);
 
   useEffect(() => {
@@ -125,6 +125,9 @@ const EventDetails = () => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
+    }
+    if (isAdmin) {
+      return; // Don't allow admins to book events
     }
 
     try {
@@ -255,9 +258,9 @@ const EventDetails = () => {
               You have successfully booked this event
             </Typography>
           </Box>
-        ) : (
+        ) : !isAdmin ? (
           <EventyButton onClick={handleBookNow} sx={{ width: '100%', mt: 3, background: '#23272f', color: '#fff', '&:hover': { background: '#181b20' } }}>Book Now</EventyButton>
-        )}
+        ) : null}
       </Container>
       <Dialog open={showSuccess} onClose={() => setShowSuccess(false)}
         PaperProps={{

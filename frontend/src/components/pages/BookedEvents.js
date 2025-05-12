@@ -26,7 +26,7 @@ const BookedEvents = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated, loading: authLoading, isAdmin } = useAuth();
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -46,9 +46,13 @@ const BookedEvents = () => {
         navigate('/login');
         return;
       }
+      if (isAdmin) {
+        navigate('/');
+        return;
+      }
       fetchBookings();
     }
-  }, [isAuthenticated, authLoading, navigate]);
+  }, [isAuthenticated, authLoading, navigate, isAdmin]);
 
   const handleCancelBooking = async (bookingId) => {
     if (window.confirm('Are you sure you want to cancel this booking?')) {

@@ -126,29 +126,31 @@ const Navbar = () => {
                     </ListItemIcon>
                     View My Profile
                   </MenuItem>
-                  <MenuItem component={RouterLink} to="/booked-events" onClick={handleClose} autoFocus={false} sx={{
-                    borderRadius: 2,
-                    mb: 1,
-                    px: 2.5,
-                    py: 1.2,
-                    fontWeight: 400,
-                    fontFamily: 'Lato, Arial, sans-serif',
-                    '&:hover, &:focus-visible': {
-                      background: accent,
-                      color: '#fff',
-                      '.MuiListItemIcon-root': { color: '#fff' },
-                    },
-                    '&.Mui-focusVisible:not(:hover)': {
-                      background: accent,
-                      color: '#fff',
-                      '.MuiListItemIcon-root': { color: '#fff' },
-                    },
-                  }}>
-                    <ListItemIcon sx={{ color: accent }}>
-                      <EventNote fontSize="small" />
-                    </ListItemIcon>
-                    My Bookings
-                  </MenuItem>
+                  {!isAdmin && (
+                    <MenuItem component={RouterLink} to="/booked-events" onClick={handleClose} autoFocus={false} sx={{
+                      borderRadius: 2,
+                      mb: 1,
+                      px: 2.5,
+                      py: 1.2,
+                      fontWeight: 400,
+                      fontFamily: 'Lato, Arial, sans-serif',
+                      '&:hover, &:focus-visible': {
+                        background: accent,
+                        color: '#fff',
+                        '.MuiListItemIcon-root': { color: '#fff' },
+                      },
+                      '&.Mui-focusVisible:not(:hover)': {
+                        background: accent,
+                        color: '#fff',
+                        '.MuiListItemIcon-root': { color: '#fff' },
+                      },
+                    }}>
+                      <ListItemIcon sx={{ color: accent }}>
+                        <EventNote fontSize="small" />
+                      </ListItemIcon>
+                      My Bookings
+                    </MenuItem>
+                  )}
                   <MenuItem onClick={handleLogout} autoFocus={false} sx={{
                     borderRadius: 2,
                     px: 2.5,

@@ -28,7 +28,7 @@ const { accent, dark, gray, cardBg, cardShadow, gradientBg } = theme;
 const Home = () => {
   const [events, setEvents] = useState([]);
   const [bookedEvents, setBookedEvents] = useState([]);
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated, loading: authLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState(null);
@@ -139,6 +139,9 @@ const Home = () => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
+    }
+    if (isAdmin) {
+      return; // Don't allow admins to book events
     }
     setSelectedEventId(eventId);
     setConfirmOpen(true);
@@ -265,7 +268,26 @@ const Home = () => {
                     {event.description}
                   </Typography>
                   <Box sx={{ mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
-                    {bookedEvents.includes(event._id) ? (
+                    {isAdmin ? (
+                      <Box
+                        component="button"
+                        onClick={() => handleViewDetails(event._id)}
+                        sx={{
+                          background: 'none',
+                          border: 'none',
+                          color: accent,
+                          fontWeight: 700,
+                          fontFamily: 'Lato, Arial, sans-serif',
+                          fontSize: '1.2rem',
+                          cursor: 'pointer',
+                          textDecoration: 'none',
+                          transition: 'color 0.2s',
+                          '&:hover': { color: dark },
+                        }}
+                      >
+                        More Info
+                      </Box>
+                    ) : bookedEvents.includes(event._id) ? (
                       <>
                         <EventyButton disabled sx={{ fontFamily: 'Lato, Arial, sans-serif', fontWeight: 700, fontSize: '1rem', px: 4, py: 1.2, borderRadius: '24px', background: '#23272f', color: '#fff' }}>Booked</EventyButton>
                         <Box
