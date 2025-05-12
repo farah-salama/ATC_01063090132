@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -30,6 +30,7 @@ const EventDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const confettiFired = useRef(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -60,6 +61,57 @@ const EventDetails = () => {
     fetchEvent();
     checkBookingStatus();
   }, [id, isAuthenticated]);
+
+  useEffect(() => {
+    if (showSuccess && !confettiFired.current) {
+      confettiFired.current = true;
+      // Dynamically load the confetti library if not already loaded
+      function fireRealisticConfetti() {
+        if (!window.confetti) return;
+        var count = 200;
+        var defaults = { origin: { y: 0.7 } };
+        function fire(particleRatio, opts) {
+          window.confetti(Object.assign({}, defaults, opts, {
+            particleCount: Math.floor(count * particleRatio)
+          }));
+        }
+        fire(0.25, {
+          spread: 26,
+          startVelocity: 55,
+        });
+        fire(0.2, {
+          spread: 60,
+        });
+        fire(0.35, {
+          spread: 100,
+          decay: 0.91,
+          scalar: 0.8
+        });
+        fire(0.1, {
+          spread: 120,
+          startVelocity: 25,
+          decay: 0.92,
+          scalar: 1.2
+        });
+        fire(0.1, {
+          spread: 120,
+          startVelocity: 45,
+        });
+      }
+      if (!window.confetti) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
+        script.async = true;
+        script.onload = fireRealisticConfetti;
+        document.body.appendChild(script);
+      } else {
+        fireRealisticConfetti();
+      }
+    }
+    if (!showSuccess) {
+      confettiFired.current = false;
+    }
+  }, [showSuccess]);
 
   const handleBookNow = async () => {
     if (!isAuthenticated) {
@@ -191,7 +243,13 @@ const EventDetails = () => {
           <EventyButton onClick={handleBookNow} sx={{ width: '100%', mt: 3, background: '#23272f', color: '#fff', '&:hover': { background: '#181b20' } }}>Book Now</EventyButton>
         )}
       </Container>
-      <Dialog open={showSuccess} onClose={() => setShowSuccess(false)}>
+      <Dialog open={showSuccess} onClose={() => setShowSuccess(false)}
+        PaperProps={{
+          sx: {
+            borderRadius: '24px',
+          },
+        }}
+      >
         <DialogTitle sx={{ color: accent, fontWeight: 700 }}>Booking Successful!</DialogTitle>
         <DialogContent>
           <Typography sx={{ color: gray }}>
@@ -199,14 +257,14 @@ const EventDetails = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <EventyButton variant="text" onClick={() => setShowSuccess(false)} sx={{ color: accent, fontWeight: 700 }}>Close</EventyButton>
+          <EventyButton variant="text" onClick={() => setShowSuccess(false)} sx={{ color: accent, fontWeight: 700, background: 'transparent', '&:hover': { background: '#f3eaff', color: accent } }}>Close</EventyButton>
           <EventyButton
             variant="text"
             onClick={() => {
               setShowSuccess(false);
               navigate('/booked-events');
             }}
-            sx={{ color: accent, fontWeight: 700 }}
+            sx={{ color: accent, fontWeight: 700, background: 'transparent', '&:hover': { background: '#f3eaff', color: accent } }}
           >
             View My Bookings
           </EventyButton>

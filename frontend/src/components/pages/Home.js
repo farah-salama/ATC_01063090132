@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -9,6 +9,11 @@ import {
   Typography,
   Box,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  CircularProgress,
 } from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -25,6 +30,12 @@ const Home = () => {
   const [bookedEvents, setBookedEvents] = useState([]);
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState(null);
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingError, setBookingError] = useState('');
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const confettiFired = useRef(false);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -44,12 +55,64 @@ const Home = () => {
         } catch (error) {
           console.error('Error fetching bookings:', error);
         }
+        console.log(bookedEvents);
       }
     };
 
     fetchEvents();
     fetchBookedEvents();
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (bookingSuccess && !confettiFired.current) {
+      confettiFired.current = true;
+      // Dynamically load the confetti library if not already loaded
+      function fireRealisticConfetti() {
+        if (!window.confetti) return;
+        var count = 200;
+        var defaults = { origin: { y: 0.7 } };
+        function fire(particleRatio, opts) {
+          window.confetti(Object.assign({}, defaults, opts, {
+            particleCount: Math.floor(count * particleRatio)
+          }));
+        }
+        fire(0.25, {
+          spread: 26,
+          startVelocity: 55,
+        });
+        fire(0.2, {
+          spread: 60,
+        });
+        fire(0.35, {
+          spread: 100,
+          decay: 0.91,
+          scalar: 0.8
+        });
+        fire(0.1, {
+          spread: 120,
+          startVelocity: 25,
+          decay: 0.92,
+          scalar: 1.2
+        });
+        fire(0.1, {
+          spread: 120,
+          startVelocity: 45,
+        });
+      }
+      if (!window.confetti) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
+        script.async = true;
+        script.onload = fireRealisticConfetti;
+        document.body.appendChild(script);
+      } else {
+        fireRealisticConfetti();
+      }
+    }
+    if (!bookingSuccess) {
+      confettiFired.current = false;
+    }
+  }, [bookingSuccess]);
 
   const handleViewDetails = (eventId) => {
     if (!isAuthenticated) {
@@ -59,12 +122,28 @@ const Home = () => {
     navigate(`/event/${eventId}`);
   };
 
-  const handleBookNow = async (eventId) => {
+  const handleBookNow = (eventId) => {
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
-    navigate(`/event/${eventId}`);
+    setSelectedEventId(eventId);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmBooking = async () => {
+    setBookingLoading(true);
+    setBookingError('');
+    try {
+      await axios.post(`${API_URL}/api/bookings`, { eventId: selectedEventId });
+      setBookedEvents(prev => [...prev, selectedEventId]);
+      setBookingSuccess(true);
+      setConfirmOpen(false);
+    } catch (error) {
+      setBookingError(error.response?.data?.message || 'Error booking event');
+    } finally {
+      setBookingLoading(false);
+    }
   };
 
   return (
@@ -170,7 +249,7 @@ const Home = () => {
                     {event.description}
                   </Typography>
                   <Box sx={{ mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
-                    {bookedEvents.includes(event._id) ? (
+                    {bookedEvents.map(String).includes(String(event._id)) ? (
                       <EventyButton disabled sx={{ fontFamily: 'Lato, Arial, sans-serif', fontWeight: 700, fontSize: '1rem', px: 4, py: 1.2, borderRadius: '24px', background: '#23272f', color: '#fff' }}>Booked</EventyButton>
                     ) : (
                       <>
@@ -203,6 +282,54 @@ const Home = () => {
           ))}
         </Grid>
       </Container>
+      {/* Booking Confirmation Dialog */}
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}
+        PaperProps={{
+          sx: {
+            borderRadius: '24px',
+          },
+        }}
+      >
+        <DialogTitle sx={{ color: accent, fontWeight: 700 }}>Confirm Booking</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to book this event?</Typography>
+          {bookingError && <Typography color="error" sx={{ mt: 1 }}>{bookingError}</Typography>}
+        </DialogContent>
+        <DialogActions>
+          <EventyButton variant="text" onClick={() => setConfirmOpen(false)} sx={{ color: accent, fontWeight: 700, background: 'transparent', '&:hover': { background: '#f3eaff', color: accent } }}>Cancel</EventyButton>
+          <EventyButton onClick={handleConfirmBooking} disabled={bookingLoading}>
+            {bookingLoading ? <CircularProgress size={22} sx={{ color: '#fff' }} /> : 'Confirm'}
+          </EventyButton>
+        </DialogActions>
+      </Dialog>
+      {/* Booking Success Dialog */}
+      <Dialog open={bookingSuccess} onClose={() => setBookingSuccess(false)}
+        PaperProps={{
+          sx: {
+            borderRadius: '24px',
+          },
+        }}
+      >
+        <DialogTitle sx={{ color: accent, fontWeight: 700 }}>Booking Successful!</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ color: gray }}>
+            You have successfully booked this event. You can view your bookings in the "My Bookings" section.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <EventyButton variant="text" onClick={() => setBookingSuccess(false)} sx={{ color: accent, fontWeight: 700, background: 'transparent', '&:hover': { background: '#f3eaff', color: accent } }}>Close</EventyButton>
+          <EventyButton
+            variant="text"
+            onClick={() => {
+              setBookingSuccess(false);
+              navigate('/booked-events');
+            }}
+            sx={{ color: accent, fontWeight: 700, background: 'transparent', '&:hover': { background: '#f3eaff', color: accent } }}
+          >
+            View My Bookings
+          </EventyButton>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
