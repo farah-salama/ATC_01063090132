@@ -26,14 +26,9 @@ const BookedEvents = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
-
     const fetchBookings = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/bookings`);
@@ -46,14 +41,22 @@ const BookedEvents = () => {
       }
     };
 
-    fetchBookings();
-  }, [isAuthenticated, navigate]);
+    if (!authLoading) {
+      if (!isAuthenticated) {
+        navigate('/login');
+        return;
+      }
+      fetchBookings();
+    }
+  }, [isAuthenticated, authLoading, navigate]);
 
   const handleCancelBooking = async (bookingId) => {
     if (window.confirm('Are you sure you want to cancel this booking?')) {
       try {
-        await axios.put(`${API_URL}/api/bookings/${bookingId}/cancel`);
-        setBookings(bookings.filter(booking => booking._id !== bookingId));
+        const res = await axios.put(`${API_URL}/api/bookings/${bookingId}/cancel`);
+        setBookings(bookings.map(booking => 
+          booking._id === bookingId ? { ...booking, status: 'cancelled' } : booking
+        ));
       } catch (error) {
         setError('Error cancelling booking');
         console.error('Error cancelling booking:', error);
@@ -65,9 +68,17 @@ const BookedEvents = () => {
     navigate(`/event/${eventId}`);
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+      <Box
+        sx={{
+          minHeight: '100vh',
+          background: gradientBg,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <CircularProgress sx={{ color: accent }} />
       </Box>
     );

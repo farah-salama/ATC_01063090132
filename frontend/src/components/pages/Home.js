@@ -28,13 +28,14 @@ const { accent, dark, gray, cardBg, cardShadow, gradientBg } = theme;
 const Home = () => {
   const [events, setEvents] = useState([]);
   const [bookedEvents, setBookedEvents] = useState([]);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingError, setBookingError] = useState('');
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
   const confettiFired = useRef(false);
 
   useEffect(() => {
@@ -51,17 +52,29 @@ const Home = () => {
       if (isAuthenticated) {
         try {
           const res = await axios.get(`${API_URL}/api/bookings`);
-          setBookedEvents(res.data.map(booking => booking.eventId));
+          const confirmedBookings = res.data.filter(booking => booking.status === 'confirmed');
+          console.log('Confirmed bookings:', confirmedBookings);
+          setBookedEvents(confirmedBookings.map(booking => booking.event._id));
+          console.log('Booked event IDs:', confirmedBookings.map(booking => booking.event._id));
         } catch (error) {
           console.error('Error fetching bookings:', error);
         }
-        console.log(bookedEvents);
       }
     };
 
-    fetchEvents();
-    fetchBookedEvents();
-  }, [isAuthenticated]);
+    const loadData = async () => {
+      setLoading(true);
+      await fetchEvents();
+      if (isAuthenticated) {
+        await fetchBookedEvents();
+      }
+      setLoading(false);
+    };
+
+    if (!authLoading) {
+      loadData();
+    }
+  }, [isAuthenticated, authLoading]);
 
   useEffect(() => {
     if (bookingSuccess && !confettiFired.current) {
@@ -146,6 +159,22 @@ const Home = () => {
     }
   };
 
+  if (loading || authLoading) {
+    return (
+      <Box
+        sx={{
+          minHeight: '100vh',
+          background: gradientBg,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress sx={{ color: accent }} />
+      </Box>
+    );
+  }
+
   return (
     <Box
       sx={{
@@ -170,24 +199,11 @@ const Home = () => {
         }}
       >
         <Typography
-          variant="subtitle2"
-          align="center"
-          sx={{ color: accent, fontWeight: 600, letterSpacing: 1, mb: 1 }}
-        >
-          Schedule Details
-        </Typography>
-        <Typography
           variant="h3"
           align="center"
-          sx={{ color: dark, fontWeight: 700, mb: 1, fontSize: { xs: '2rem', sm: '2.5rem' } }}
+          sx={{ color: dark, fontWeight: 700, mb: 4, fontSize: { xs: '2rem', sm: '2.5rem' } }}
         >
           Event Schedule
-        </Typography>
-        <Typography
-          align="center"
-          sx={{ color: gray, mb: 4, fontSize: { xs: '1rem', sm: '1.1rem' } }}
-        >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet sodales magna. Nulla id tortor ultricies, tincidunt nulla vel, aliquet risus. Duis ac justo sed leo fringilla bibendum.
         </Typography>
         <Grid container spacing={4}>
           {events.map((event) => (
@@ -249,8 +265,29 @@ const Home = () => {
                     {event.description}
                   </Typography>
                   <Box sx={{ mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
-                    {bookedEvents.map(String).includes(String(event._id)) ? (
-                      <EventyButton disabled sx={{ fontFamily: 'Lato, Arial, sans-serif', fontWeight: 700, fontSize: '1rem', px: 4, py: 1.2, borderRadius: '24px', background: '#23272f', color: '#fff' }}>Booked</EventyButton>
+                    {bookedEvents.includes(event._id) ? (
+                      <>
+                        <EventyButton disabled sx={{ fontFamily: 'Lato, Arial, sans-serif', fontWeight: 700, fontSize: '1rem', px: 4, py: 1.2, borderRadius: '24px', background: '#23272f', color: '#fff' }}>Booked</EventyButton>
+                        <Box
+                          component="button"
+                          onClick={() => handleViewDetails(event._id)}
+                          sx={{
+                            ml: 1,
+                            background: 'none',
+                            border: 'none',
+                            color: accent,
+                            fontWeight: 700,
+                            fontFamily: 'Lato, Arial, sans-serif',
+                            fontSize: '1.2rem',
+                            cursor: 'pointer',
+                            textDecoration: 'none',
+                            transition: 'color 0.2s',
+                            '&:hover': { color: dark },
+                          }}
+                        >
+                          More Info
+                        </Box>
+                      </>
                     ) : (
                       <>
                         <EventyButton onClick={() => handleBookNow(event._id)} sx={{ fontFamily: 'Lato, Arial, sans-serif', fontWeight: 700, fontSize: '1rem', px: 4, py: 1.2, borderRadius: '24px', background: '#23272f', color: '#fff', '&:hover': { background: '#181b20' } }}>Book Now</EventyButton>

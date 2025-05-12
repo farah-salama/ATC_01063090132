@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Container, Typography, Box, Paper, CircularProgress, Alert } from '@mui/material';
 import theme from '../theme';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 
-const { cardBg, cardShadow, dark, gray } = theme;
+const { cardBg, cardShadow, dark, gray, gradientBg, accent } = theme;
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { loading: authLoading } = useAuth();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -25,8 +27,27 @@ const Profile = () => {
         setLoading(false);
       }
     };
-    fetchUser();
-  }, []);
+
+    if (!authLoading) {
+      fetchUser();
+    }
+  }, [authLoading]);
+
+  if (loading || authLoading) {
+    return (
+      <Box
+        sx={{
+          minHeight: '100vh',
+          background: gradientBg,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress sx={{ color: accent }} />
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -56,9 +77,7 @@ const Profile = () => {
           <Typography variant="h4" sx={{ color: dark, fontWeight: 700, mb: 2 }}>
             My Profile
           </Typography>
-          {loading ? (
-            <CircularProgress sx={{ color: dark, my: 4 }} />
-          ) : error ? (
+          {error ? (
             <Alert severity="error">{error}</Alert>
           ) : user ? (
             <>

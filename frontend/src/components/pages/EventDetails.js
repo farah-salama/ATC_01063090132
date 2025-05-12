@@ -29,7 +29,7 @@ const EventDetails = () => {
   const [isBooked, setIsBooked] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const confettiFired = useRef(false);
 
   useEffect(() => {
@@ -39,8 +39,6 @@ const EventDetails = () => {
         setEvent(res.data);
       } catch (error) {
         setError('Error fetching event details');
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -58,9 +56,19 @@ const EventDetails = () => {
       }
     };
 
-    fetchEvent();
-    checkBookingStatus();
-  }, [id, isAuthenticated]);
+    const loadData = async () => {
+      setLoading(true);
+      await fetchEvent();
+      if (isAuthenticated) {
+        await checkBookingStatus();
+      }
+      setLoading(false);
+    };
+
+    if (!authLoading) {
+      loadData();
+    }
+  }, [id, isAuthenticated, authLoading]);
 
   useEffect(() => {
     if (showSuccess && !confettiFired.current) {
@@ -130,9 +138,17 @@ const EventDetails = () => {
     }
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+      <Box
+        sx={{
+          minHeight: '100vh',
+          background: gradientBg,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <CircularProgress sx={{ color: accent }} />
       </Box>
     );
