@@ -16,8 +16,10 @@ import {
   FormControl,
   InputLabel,
   OutlinedInput,
+  Chip,
+  Stack,
 } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Delete as DeleteIcon, Sort as SortIcon } from '@mui/icons-material';
 import axios from 'axios';
 import theme from '../theme';
 import EventyButton from '../common/EventyButton';
@@ -32,10 +34,21 @@ const CATEGORIES = [
   'Community & Causes'
 ];
 
+const SORT_OPTIONS = [
+  { value: 'name_asc', label: 'Name (A-Z)' },
+  { value: 'name_desc', label: 'Name (Z-A)' },
+  { value: 'date_asc', label: 'Date (Oldest First)' },
+  { value: 'date_desc', label: 'Date (Newest First)' },
+  { value: 'price_asc', label: 'Price (Low to High)' },
+  { value: 'price_desc', label: 'Price (High to Low)' },
+];
+
 const AdminPanel = () => {
   const [events, setEvents] = useState([]);
   const [open, setOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [sortBy, setSortBy] = useState('date_desc');
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -156,6 +169,46 @@ const AdminPanel = () => {
     }
   };
 
+  const handleCategoryFilter = (category) => {
+    setSelectedCategories(prev => 
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  const handleSort = (event) => {
+    setSortBy(event.target.value);
+  };
+
+  const getFilteredAndSortedEvents = () => {
+    let filteredEvents = [...events];
+    
+    // Apply category filter
+    if (selectedCategories.length > 0) {
+      filteredEvents = filteredEvents.filter(event => {
+        const eventCategories = Array.isArray(event.category) ? event.category : [event.category];
+        return selectedCategories.some(cat => eventCategories.includes(cat));
+      });
+    }
+
+    // Apply sorting
+    const [field, direction] = sortBy.split('_');
+    filteredEvents.sort((a, b) => {
+      let comparison = 0;
+      if (field === 'name') {
+        comparison = a.name.localeCompare(b.name);
+      } else if (field === 'date') {
+        comparison = new Date(a.date) - new Date(b.date);
+      } else if (field === 'price') {
+        comparison = Number(a.price) - Number(b.price);
+      }
+      return direction === 'asc' ? comparison : -comparison;
+    });
+
+    return filteredEvents;
+  };
+
   return (
     <Box
       sx={{
@@ -185,8 +238,54 @@ const AdminPanel = () => {
           <EventyButton onClick={() => handleOpen()}>Add New Event</EventyButton>
         </Box>
 
+        {/* Filters and Sort Section */}
+        <Box sx={{ mb: 4 }}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Typography variant="subtitle1" sx={{ color: dark, mb: 1, fontWeight: 600 }}>
+                Filter by Categories:
+              </Typography>
+              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                {CATEGORIES.map((category) => (
+                  <Chip
+                    key={category}
+                    label={category}
+                    onClick={() => handleCategoryFilter(category)}
+                    sx={{
+                      background: selectedCategories.includes(category) ? accent : '#f0f0f0',
+                      color: selectedCategories.includes(category) ? '#fff' : dark,
+                      '&:hover': {
+                        background: selectedCategories.includes(category) ? accent : '#e0e0e0',
+                      },
+                      mb: 1,
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <InputLabel>Sort By</InputLabel>
+                <Select
+                  value={sortBy}
+                  onChange={handleSort}
+                  label="Sort By"
+                  startAdornment={<SortIcon sx={{ color: accent, mr: 1 }} />}
+                  sx={{ background: '#f6f6fa', borderRadius: 2 }}
+                >
+                  {SORT_OPTIONS.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </Box>
+
         <Grid container spacing={4}>
-          {events.map((event) => (
+          {getFilteredAndSortedEvents().map((event) => (
             <Grid item xs={12} key={event._id}>
               <Paper
                 sx={{
