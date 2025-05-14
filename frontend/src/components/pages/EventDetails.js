@@ -29,6 +29,15 @@ import { CalendarToday, LocationOn, AttachMoney, Search } from '@mui/icons-mater
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const { accent, dark, gray, cardBg, cardShadow, gradientBg } = theme;
 
+// Helper to format date as dd/mm/yyyy
+const formatDate = (date) => {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 const EventDetails = () => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -268,7 +277,7 @@ const EventDetails = () => {
         </Typography>
         <Box sx={{ display: 'flex', gap: 3, mb: 3, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <CalendarToday sx={{ color: accent, fontSize: '1.2rem' }} /> {new Date(event.date).toLocaleDateString()}
+            <CalendarToday sx={{ color: accent, fontSize: '1.2rem' }} /> {formatDate(event.date)}
           </Typography>
           <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <LocationOn sx={{ color: accent, fontSize: '1.2rem' }} /> {event.venue}
@@ -446,7 +455,7 @@ const EventDetails = () => {
                             borderBottom: '1px solid #f0f0f0',
                           }}
                         >
-                          {new Date(booking.createdAt).toLocaleDateString()}
+                          {formatDate(booking.createdAt)}
                         </TableCell>
                       </TableRow>
                     ))

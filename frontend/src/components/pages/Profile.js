@@ -7,6 +7,15 @@ import { useAuth } from '../../context/AuthContext';
 const { cardBg, cardShadow, dark, gray, gradientBg, accent } = theme;
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
+// Helper to format date as dd/mm/yyyy
+const formatDate = (date) => {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -86,7 +95,7 @@ const Profile = () => {
               </Typography>
               <Typography sx={{ color: gray, mb: 1 }}>{user.email}</Typography>
               <Typography sx={{ color: gray }}>
-                Joined: {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : ''}
+                Joined: {user.createdAt ? formatDate(user.createdAt) : ''}
               </Typography>
             </>
           ) : null}

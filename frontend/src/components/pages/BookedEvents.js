@@ -21,6 +21,15 @@ import { CalendarToday, LocationOn } from '@mui/icons-material';
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const { accent, dark, gray, cardBg, cardShadow, gradientBg } = theme;
 
+// Helper to format date as dd/mm/yyyy
+const formatDate = (date) => {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 const BookedEvents = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -162,7 +171,7 @@ const BookedEvents = () => {
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 2, flexWrap: 'wrap' }}>
                       <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <CalendarToday sx={{ color: accent, fontSize: '1.2rem' }} /> {new Date(booking.event.date).toLocaleDateString()}
+                        <CalendarToday sx={{ color: accent, fontSize: '1.2rem' }} /> {formatDate(booking.event.date)}
                       </Typography>
                       <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
                         <LocationOn sx={{ color: accent, fontSize: '1.2rem' }} /> {booking.event.venue}
@@ -183,7 +192,7 @@ const BookedEvents = () => {
                         }}
                       />
                       <Typography sx={{ color: gray, fontSize: '0.95rem' }}>
-                        Booked on: {new Date(booking.createdAt).toLocaleDateString()}
+                        Booked on: {formatDate(booking.createdAt)}
                       </Typography>
                     </Box>
                     <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>

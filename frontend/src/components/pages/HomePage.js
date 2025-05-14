@@ -19,6 +19,15 @@ import { CalendarToday, LocationOn, AttachMoney } from '@mui/icons-material';
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const { accent, dark, gray, cardBg, cardShadow, gradientBg } = theme;
 
+// Helper to format date as dd/mm/yyyy
+const formatDate = (date) => {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 const HomePage = () => {
   const [topEvents, setTopEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -196,7 +205,7 @@ const HomePage = () => {
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 4 }}>
                     <Typography sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1.5, fontSize: '1.2rem' }}>
-                      <CalendarToday sx={{ color: accent, fontSize: '1.5rem' }} /> {new Date(event.date).toLocaleDateString()}
+                      <CalendarToday sx={{ color: accent, fontSize: '1.5rem' }} /> {formatDate(event.date)}
                     </Typography>
                     <Typography sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1.5, fontSize: '1.2rem' }}>
                       <LocationOn sx={{ color: accent, fontSize: '1.5rem' }} /> {event.venue}
@@ -227,7 +236,7 @@ const HomePage = () => {
           </Carousel>
         </Box>
 
-        <Box sx={{ textAlign: 'center' }}>
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
           <EventyButton
             onClick={() => navigate('/events')}
             sx={{

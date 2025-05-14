@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Container,
@@ -50,6 +50,60 @@ const SORT_OPTIONS = [
   { value: 'price_desc', label: 'Price (High to Low)' },
 ];
 
+// Helper to format date as dd/mm/yyyy
+const formatDate = (date) => {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+// Helper to fire confetti
+const fireConfetti = () => {
+  function fireRealisticConfetti() {
+    if (!window.confetti) return;
+    var count = 200;
+    var defaults = { origin: { y: 0.7 } };
+    function fire(particleRatio, opts) {
+      window.confetti(Object.assign({}, defaults, opts, {
+        particleCount: Math.floor(count * particleRatio)
+      }));
+    }
+    fire(0.25, {
+      spread: 26,
+      startVelocity: 55,
+    });
+    fire(0.2, {
+      spread: 60,
+    });
+    fire(0.35, {
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92,
+      scalar: 1.2
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 45,
+    });
+  }
+  if (!window.confetti) {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
+    script.async = true;
+    script.onload = fireRealisticConfetti;
+    document.body.appendChild(script);
+  } else {
+    fireRealisticConfetti();
+  }
+};
+
 const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [bookedEvents, setBookedEvents] = useState([]);
@@ -64,6 +118,7 @@ const EventsList = () => {
   const [bookingError, setBookingError] = useState('');
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
+  const confettiFired = useRef(false);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -108,6 +163,16 @@ const EventsList = () => {
       loadData();
     }
   }, [isAuthenticated, authLoading, location.search]);
+
+  useEffect(() => {
+    if (bookingSuccess && !confettiFired.current) {
+      confettiFired.current = true;
+      fireConfetti();
+    }
+    if (!bookingSuccess) {
+      confettiFired.current = false;
+    }
+  }, [bookingSuccess]);
 
   const handleViewDetails = (eventId) => {
     if (!isAuthenticated) {
@@ -314,7 +379,7 @@ const EventsList = () => {
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
                     <Typography variant="body2" sx={{ color: gray, display: 'flex', alignItems: 'center', gap: 1 }}>
                       <CalendarToday sx={{ color: accent, fontSize: '1rem' }} />
-                      {new Date(event.date).toLocaleDateString()}
+                      {formatDate(event.date)}
                     </Typography>
                     <Typography variant="body2" sx={{ color: gray, display: 'flex', alignItems: 'center', gap: 1 }}>
                       <LocationOn sx={{ color: accent, fontSize: '1rem' }} />
