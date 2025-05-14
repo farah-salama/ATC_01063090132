@@ -38,7 +38,7 @@ const Navbar = () => {
   const handleLogout = () => {
     handleClose();
     logout();
-    navigate('/events');
+    navigate('/');
   };
 
   const handleSearch = (e) => {
