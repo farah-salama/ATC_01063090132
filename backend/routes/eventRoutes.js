@@ -1,7 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const Event = require('../models/eventModel');
 const { protect, admin } = require('../middleware/auth');
+const {
+  getEvents,
+  createEvent,
+  getEventById,
+  updateEvent,
+  deleteEvent
+} = require('../controllers/eventController');
+const Event = require('../models/eventModel');
 
 // Get top booked events
 router.get('/top-booked', async (req, res) => {
@@ -34,64 +41,11 @@ router.get('/top-booked', async (req, res) => {
   }
 });
 
-// Get all events
-router.get('/', async (req, res) => {
-  try {
-    const events = await Event.find().sort({ date: 1 });
-    res.json(events);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching events' });
-  }
-});
-
-// Create event (admin only)
-router.post('/', protect, admin, async (req, res) => {
-  try {
-    const event = new Event(req.body);
-    await event.save();
-    res.status(201).json(event);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating event' });
-  }
-});
-
-// Get single event
-router.get('/:id', async (req, res) => {
-  try {
-    const event = await Event.findById(req.params.id);
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
-    }
-    res.json(event);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching event' });
-  }
-});
-
-// Update event (admin only)
-router.put('/:id', protect, admin, async (req, res) => {
-  try {
-    const event = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
-    }
-    res.json(event);
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating event' });
-  }
-});
-
-// Delete event (admin only)
-router.delete('/:id', protect, admin, async (req, res) => {
-  try {
-    const event = await Event.findByIdAndDelete(req.params.id);
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
-    }
-    res.json({ message: 'Event deleted' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting event' });
-  }
-});
+// Use controller functions for all other routes
+router.get('/', getEvents);
+router.post('/', protect, admin, createEvent);
+router.get('/:id', getEventById);
+router.put('/:id', protect, admin, updateEvent);
+router.delete('/:id', protect, admin, deleteEvent);
 
 module.exports = router; 
