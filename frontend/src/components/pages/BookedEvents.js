@@ -133,11 +133,11 @@ const BookedEvents = () => {
           mb: 4,
         }}
       >
-        <Typography variant="h4" component="h1" align="center" sx={{ color: dark, fontWeight: 700, mb: 4 }}>
+        <Typography variant="h4" component="h1" align="center" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 4 }}>
           My Booked Events
         </Typography>
         {bookings.length === 0 ? (
-          <Typography variant="h6" align="center" sx={{ mt: 4, color: gray }}>
+          <Typography variant="h6" align="center" sx={{ mt: 4, color: 'var(--text-secondary)' }}>
             You haven't booked any events yet.
           </Typography>
         ) : (
@@ -173,10 +173,10 @@ const BookedEvents = () => {
                       {booking.event.name}
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 2, flexWrap: 'wrap' }}>
-                      <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Typography sx={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
                         <CalendarToday sx={{ color: accent, fontSize: '1.2rem' }} /> {formatDate(booking.event.date)}
                       </Typography>
-                      <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Typography sx={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
                         <LocationOn sx={{ color: accent, fontSize: '1.2rem' }} /> {booking.event.venue}
                       </Typography>
                     </Box>
@@ -194,7 +194,7 @@ const BookedEvents = () => {
                           textTransform: 'capitalize',
                         }}
                       />
-                      <Typography sx={{ color: gray, fontSize: '0.95rem' }}>
+                      <Typography sx={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
                         Booked on: {formatDate(booking.createdAt)}
                       </Typography>
                     </Box>

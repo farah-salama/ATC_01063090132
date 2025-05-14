@@ -83,18 +83,18 @@ const Profile = () => {
             textAlign: 'center',
           }}
         >
-          <Typography variant="h4" sx={{ color: dark, fontWeight: 700, mb: 2 }}>
+          <Typography variant="h4" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 2 }}>
             My Profile
           </Typography>
           {error ? (
             <Alert severity="error">{error}</Alert>
           ) : user ? (
             <>
-              <Typography variant="h6" sx={{ color: dark, mb: 1 }}>
+              <Typography variant="h6" sx={{ color: 'var(--text-primary)', mb: 1 }}>
                 {user.name}
               </Typography>
-              <Typography sx={{ color: gray, mb: 1 }}>{user.email}</Typography>
-              <Typography sx={{ color: gray }}>
+              <Typography sx={{ color: 'var(--text-secondary)', mb: 1 }}>{user.email}</Typography>
+              <Typography sx={{ color: 'var(--text-secondary)' }}>
                 Joined: {user.createdAt ? formatDate(user.createdAt) : ''}
               </Typography>
             </>

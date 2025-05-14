@@ -1,3 +1,24 @@
+:root {
+  /* Light theme (default) */
+  --background-primary: #ffffff;
+  --background-secondary: #f5f5f5;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --border-color: #e0e0e0;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --navbar-footer-bg: #fff;
+}
+
+[data-theme='dark'] {
+  --background-primary: #1a1a1a;
+  --background-secondary: #2d2d2d;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --border-color: #404040;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --navbar-footer-bg: #181a1b;
+}
+
 body, *:not(.logo) {
   font-family: 'Lato', Arial, sans-serif !important;
 }
@@ -6,11 +27,13 @@ body {
   font-optical-sizing: auto;
   font-style: normal;
   font-weight: 400;
-  background: #fff;
+  background: var(--background-primary);
+  color: var(--text-primary);
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 code {
@@ -21,9 +44,15 @@ code {
 /* Optionally, set a default font for all MUI Typography */
 .MuiTypography-root {
   font-weight: 400;
+  color: var(--text-primary);
 }
 
 /* Exclude the logo from the global font family */
 .logo, .logo * {
   font-family: "Playwrite DK Loopet", cursive !important;
+}
+
+/* Add smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }

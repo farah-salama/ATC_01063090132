@@ -276,14 +276,22 @@ const EventsList = () => {
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
-                <InputLabel>Filter by Categories</InputLabel>
+                <InputLabel sx={{ color: 'var(--text-primary)' }}>Filter by Categories</InputLabel>
                 <Select
                   multiple
                   value={selectedCategories}
                   onChange={(e) => setSelectedCategories(e.target.value)}
                   label="Filter by Categories"
                   startAdornment={<CategoryIcon sx={{ color: accent, mr: 1 }} />}
-                  sx={{ background: '#f6f6fa', borderRadius: 2 }}
+                  sx={{ background: 'var(--background-secondary)', borderRadius: 2, color: 'var(--text-primary)' }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        background: 'var(--background-secondary)',
+                        color: 'var(--text-primary)',
+                      },
+                    },
+                  }}
                   renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                       {selected.map((value) => (
@@ -302,7 +310,7 @@ const EventsList = () => {
                   )}
                 >
                   {CATEGORIES.map((category) => (
-                    <MenuItem key={category} value={category}>
+                    <MenuItem key={category} value={category} sx={{ color: 'var(--text-primary)' }}>
                       {category}
                     </MenuItem>
                   ))}
@@ -311,16 +319,24 @@ const EventsList = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
-                <InputLabel>Sort By</InputLabel>
+                <InputLabel sx={{ color: 'var(--text-primary)' }}>Sort By</InputLabel>
                 <Select
                   value={sortBy}
                   onChange={handleSort}
                   label="Sort By"
                   startAdornment={<SortIcon sx={{ color: accent, mr: 1 }} />}
-                  sx={{ background: '#f6f6fa', borderRadius: 2 }}
+                  sx={{ background: 'var(--background-secondary)', borderRadius: 2, color: 'var(--text-primary)' }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        background: 'var(--background-secondary)',
+                        color: 'var(--text-primary)',
+                      },
+                    },
+                  }}
                 >
                   {SORT_OPTIONS.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
+                    <MenuItem key={option.value} value={option.value} sx={{ color: 'var(--text-primary)' }}>
                       {option.label}
                     </MenuItem>
                   ))}
@@ -371,7 +387,7 @@ const EventsList = () => {
                       />
                     ))}
                   </Box>
-                  <Typography variant="h6" component="h2" sx={{ color: dark, fontWeight: 700, mb: 1 }}>
+                  <Typography variant="h6" component="h2" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 1 }}>
                     {event.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -380,15 +396,15 @@ const EventsList = () => {
                       : event.description}
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
-                    <Typography variant="body2" sx={{ color: gray, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body2" sx={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 1 }}>
                       <CalendarToday sx={{ color: accent, fontSize: '1rem' }} />
                       {formatDate(event.date)}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: gray, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body2" sx={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 1 }}>
                       <LocationOn sx={{ color: accent, fontSize: '1rem' }} />
                       {event.venue}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: gray, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body2" sx={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 1 }}>
                       <AttachMoney sx={{ color: accent, fontSize: '1rem' }} />
                       {event.price}
                     </Typography>
@@ -479,7 +495,7 @@ const EventsList = () => {
       >
         <DialogTitle sx={{ color: accent, fontWeight: 700 }}>Booking Successful!</DialogTitle>
         <DialogContent>
-          <Typography sx={{ color: gray }}>
+          <Typography sx={{ color: 'var(--text-secondary)' }}>
             You have successfully booked this event. You can view your bookings in the "My Bookings" section.
           </Typography>
         </DialogContent>

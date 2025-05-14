@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material';
+import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -13,24 +13,33 @@ import AdminPanel from './components/admin/AdminPanel';
 import BookedEvents from './components/pages/BookedEvents';
 import Profile from './components/pages/Profile';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import PrivateRoute from './components/routing/PrivateRoute';
 import AdminRoute from './components/routing/AdminRoute';
 import { Box } from '@mui/material';
+import { useTheme } from './context/ThemeContext';
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-  },
-});
+const AppContent = () => {
+  const { isDarkMode } = useTheme();
 
-function App() {
+  const theme = createTheme({
+    palette: {
+      mode: isDarkMode ? 'dark' : 'light',
+      primary: {
+        main: '#1976d2',
+      },
+      secondary: {
+        main: '#dc004e',
+      },
+      background: {
+        default: isDarkMode ? '#1a1a1a' : '#ffffff',
+        paper: isDarkMode ? '#2d2d2d' : '#ffffff',
+      },
+    },
+  });
+
   return (
-    <ThemeProvider theme={theme}>
+    <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
         <Router>
@@ -81,6 +90,14 @@ function App() {
           </Box>
         </Router>
       </AuthProvider>
+    </MuiThemeProvider>
+  );
+};
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
     </ThemeProvider>
   );
 }

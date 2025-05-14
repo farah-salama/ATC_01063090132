@@ -278,7 +278,7 @@ const AdminPanel = () => {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4, alignItems: 'center' }}>
-          <Typography variant="h4" component="h1" sx={{ color: dark, fontWeight: 700 }}>
+          <Typography variant="h4" component="h1" sx={{ color: 'var(--text-primary)', fontWeight: 700 }}>
             Event Management
           </Typography>
           <EventyButton onClick={() => handleOpen()}>Add New Event</EventyButton>
@@ -288,7 +288,7 @@ const AdminPanel = () => {
         <Box sx={{ mb: 4 }}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Typography variant="subtitle1" sx={{ color: dark, mb: 1, fontWeight: 600 }}>
+              <Typography variant="subtitle1" sx={{ color: 'var(--text-primary)', mb: 1, fontWeight: 600 }}>
                 Filter by Categories:
               </Typography>
               <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -311,16 +311,24 @@ const AdminPanel = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
-                <InputLabel>Sort By</InputLabel>
+                <InputLabel sx={{ color: 'var(--text-primary)' }}>Sort By</InputLabel>
                 <Select
                   value={sortBy}
                   onChange={handleSort}
                   label="Sort By"
                   startAdornment={<SortIcon sx={{ color: accent, mr: 1 }} />}
-                  sx={{ background: '#f6f6fa', borderRadius: 2 }}
+                  sx={{ background: 'var(--background-secondary)', borderRadius: 2, color: 'var(--text-primary)' }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        background: 'var(--background-secondary)',
+                        color: 'var(--text-primary)',
+                      },
+                    },
+                  }}
                 >
                   {SORT_OPTIONS.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
+                    <MenuItem key={option.value} value={option.value} sx={{ color: 'var(--text-primary)' }}>
                       {option.label}
                     </MenuItem>
                   ))}
@@ -348,7 +356,7 @@ const AdminPanel = () => {
                     <Typography variant="h6" sx={{ color: accent, fontWeight: 700 }}>
                       {event.name}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: gray, fontWeight: 500 }}>
+                    <Typography variant="body2" sx={{ color: 'var(--text-secondary)', fontWeight: 500 }}>
                       {Array.isArray(event.category) ? event.category.join(', ') : event.category} • {formatDate(event.date)} • ${event.price}
                     </Typography>
                   </Box>
@@ -465,7 +473,7 @@ const AdminPanel = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography variant="subtitle2" sx={{ color: dark, mb: 1 }}>
+                  <Typography variant="subtitle2" sx={{ color: 'var(--text-primary)', mb: 1 }}>
                     Event Image
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, alignItems: 'center' }}>
@@ -475,7 +483,7 @@ const AdminPanel = () => {
                       onChange={handleImageFileChange}
                       style={{ display: 'block' }}
                     />
-                    <Typography sx={{ color: gray, fontSize: '0.95rem' }}>or</Typography>
+                    <Typography sx={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>or</Typography>
                     <TextField
                       fullWidth
                       label="Image URL"

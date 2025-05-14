@@ -27,7 +27,7 @@ const Footer = () => {
     <Box
       component="footer"
       sx={{
-        background: cardBg,
+        background: theme.navbarFooterBg,
         borderRadius: '24px 24px 0 0',
         mt: 8,
         pt: 6,
@@ -53,7 +53,7 @@ const Footer = () => {
             >
               Eventy
             </Typography>
-            <Typography variant="body1" sx={{ color: gray, mb: 2 }}>
+            <Typography variant="body1" sx={{ color: 'var(--text-secondary)', mb: 2 }}>
               Your one-stop platform for discovering and booking amazing events. From concerts to workshops, we bring you the best experiences in your area.
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
@@ -98,7 +98,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" sx={{ color: dark, fontWeight: 700, mb: 2 }}>
+            <Typography variant="h6" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 2 }}>
               Quick Links
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -106,7 +106,7 @@ const Footer = () => {
                 component={RouterLink}
                 to="/events"
                 sx={{
-                  color: gray,
+                  color: 'var(--text-secondary)',
                   textDecoration: 'none',
                   '&:hover': { color: accent },
                 }}
@@ -117,7 +117,7 @@ const Footer = () => {
                 component={RouterLink}
                 to="/booked-events"
                 sx={{
-                  color: gray,
+                  color: 'var(--text-secondary)',
                   textDecoration: 'none',
                   '&:hover': { color: accent },
                 }}
@@ -128,7 +128,7 @@ const Footer = () => {
                 component={RouterLink}
                 to="/profile"
                 sx={{
-                  color: gray,
+                  color: 'var(--text-secondary)',
                   textDecoration: 'none',
                   '&:hover': { color: accent },
                 }}
@@ -139,7 +139,7 @@ const Footer = () => {
                 component={RouterLink}
                 to="/about"
                 sx={{
-                  color: gray,
+                  color: 'var(--text-secondary)',
                   textDecoration: 'none',
                   '&:hover': { color: accent },
                 }}
@@ -151,25 +151,25 @@ const Footer = () => {
 
           {/* Contact Info */}
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" sx={{ color: dark, fontWeight: 700, mb: 2 }}>
+            <Typography variant="h6" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 2 }}>
               Contact Us
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Email sx={{ color: accent }} />
-                <Typography sx={{ color: gray }}>
+                <Typography sx={{ color: 'var(--text-secondary)' }}>
                   support@eventy.com
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Phone sx={{ color: accent }} />
-                <Typography sx={{ color: gray }}>
+                <Typography sx={{ color: 'var(--text-secondary)' }}>
                   +1 (555) 123-4567
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <LocationOn sx={{ color: accent }} />
-                <Typography sx={{ color: gray }}>
+                <Typography sx={{ color: 'var(--text-secondary)' }}>
                   123 Event Street, City, Country
                 </Typography>
               </Box>
@@ -181,7 +181,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="body2" sx={{ color: gray }}>
+          <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
             © {new Date().getFullYear()} Eventy. All rights reserved.
           </Typography>
         </Box>

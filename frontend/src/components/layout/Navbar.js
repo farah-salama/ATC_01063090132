@@ -13,8 +13,9 @@ import {
   TextField,
   InputAdornment,
 } from '@mui/material';
-import { AccountCircle, ArrowDropDown, EventNote, Logout as LogoutIcon, Search } from '@mui/icons-material';
+import { AccountCircle, ArrowDropDown, EventNote, Logout as LogoutIcon, Search, DarkMode, LightMode } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import theme from '../theme';
 import EventyButton from '../common/EventyButton';
 
@@ -22,6 +23,7 @@ const { accent, dark, cardBg, cardShadow } = theme;
 
 const Navbar = () => {
   const { isAuthenticated, isAdmin, logout, user } = useAuth();
+  const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,7 +51,7 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static" elevation={0} sx={{ background: cardBg, boxShadow: cardShadow, borderRadius: '0 0 24px 24px', mb: 4 }}>
+    <AppBar position="static" elevation={0} sx={{ background: theme.navbarFooterBg, boxShadow: cardShadow, borderRadius: '0 0 24px 24px', mb: 4 }}>
       <Container maxWidth="lg">
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', py: 2 }}>
           <Typography
@@ -112,6 +114,19 @@ const Navbar = () => {
           </Box>
 
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+            <IconButton
+              onClick={toggleTheme}
+              sx={{
+                color: accent,
+                background: '#f3eaff',
+                borderRadius: '999px',
+                p: 1,
+                '&:hover': { background: '#e9d6fa' },
+              }}
+            >
+              {isDarkMode ? <LightMode /> : <DarkMode />}
+            </IconButton>
+            
             {isAuthenticated ? (
               <>
                 {isAdmin && (
@@ -129,7 +144,7 @@ const Navbar = () => {
                 >
                   <AccountCircle fontSize="large" />
                   {user && (
-                    <Typography component="span" sx={{ ml: 1, fontWeight: 400, color: dark, fontFamily: 'Lato, Arial, sans-serif', fontSize: '1.1rem', textTransform: 'capitalize' }}>
+                    <Typography component="span" sx={{ ml: 1, fontWeight: 400, color: '#222', fontFamily: 'Lato, Arial, sans-serif', fontSize: '1.1rem', textTransform: 'capitalize' }}>
                       {user.name}
                     </Typography>
                   )}
@@ -148,8 +163,8 @@ const Navbar = () => {
                       minWidth: 200,
                       borderRadius: 3,
                       boxShadow: cardShadow,
-                      border: '1.5px solid #ede7f6',
-                      background: '#faf7ff',
+                      border: '1.5px solid var(--border-color)',
+                      background: 'var(--background-secondary)',
                       p: 1,
                     },
                   }}
@@ -166,16 +181,16 @@ const Navbar = () => {
                     py: 1.2,
                     fontWeight: 400,
                     fontFamily: 'Lato, Arial, sans-serif',
-                    color: dark,
+                    color: 'var(--text-primary)',
                     '&:hover, &:focus-visible': {
-                      background: accent,
-                      color: '#fff',
-                      '.MuiListItemIcon-root': { color: '#fff' },
+                      background: 'var(--background-primary)',
+                      color: accent,
+                      '.MuiListItemIcon-root': { color: accent },
                     },
                     '&.Mui-focusVisible:not(:hover)': {
-                      background: accent,
-                      color: '#fff',
-                      '.MuiListItemIcon-root': { color: '#fff' },
+                      background: 'var(--background-primary)',
+                      color: accent,
+                      '.MuiListItemIcon-root': { color: accent },
                     },
                   }}>
                     <ListItemIcon sx={{ color: accent }}>
@@ -191,15 +206,16 @@ const Navbar = () => {
                       py: 1.2,
                       fontWeight: 400,
                       fontFamily: 'Lato, Arial, sans-serif',
+                      color: 'var(--text-primary)',
                       '&:hover, &:focus-visible': {
-                        background: accent,
-                        color: '#fff',
-                        '.MuiListItemIcon-root': { color: '#fff' },
+                        background: 'var(--background-primary)',
+                        color: accent,
+                        '.MuiListItemIcon-root': { color: accent },
                       },
                       '&.Mui-focusVisible:not(:hover)': {
-                        background: accent,
-                        color: '#fff',
-                        '.MuiListItemIcon-root': { color: '#fff' },
+                        background: 'var(--background-primary)',
+                        color: accent,
+                        '.MuiListItemIcon-root': { color: accent },
                       },
                     }}>
                       <ListItemIcon sx={{ color: accent }}>
@@ -216,12 +232,12 @@ const Navbar = () => {
                     fontFamily: 'Lato, Arial, sans-serif',
                     color: 'error.main',
                     '&:hover, &:focus-visible': {
-                      background: '#ffeaea',
+                      background: 'var(--background-primary)',
                       color: 'error.main',
                       '.MuiListItemIcon-root': { color: 'error.main' },
                     },
                     '&.Mui-focusVisible:not(:hover)': {
-                      background: '#ffeaea',
+                      background: 'var(--background-primary)',
                       color: 'error.main',
                       '.MuiListItemIcon-root': { color: 'error.main' },
                     },

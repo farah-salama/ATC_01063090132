@@ -100,15 +100,15 @@ const HomePage = () => {
     >
       <Container maxWidth="lg">
         <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography variant="h2" component="h1" sx={{ color: dark, fontWeight: 900, mb: 2 }}>
+          <Typography variant="h2" component="h1" sx={{ color: 'var(--text-primary)', fontWeight: 900, mb: 2 }}>
             Welcome to Eventy
           </Typography>
-          <Typography variant="h5" sx={{ color: gray, mb: 4 }}>
+          <Typography variant="h5" sx={{ color: 'var(--text-secondary)', mb: 4 }}>
             Discover and book the most popular events in your area
           </Typography>
         </Box>
 
-        <Typography variant="h4" component="h2" sx={{ color: dark, fontWeight: 700, mb: 4 }}>
+        <Typography variant="h4" component="h2" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 4 }}>
           Most Popular Events
         </Typography>
 
@@ -207,13 +207,13 @@ const HomePage = () => {
                     {event.name}
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 4 }}>
-                    <Typography sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1.5, fontSize: '1.2rem' }}>
+                    <Typography sx={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 1.5, fontSize: '1.2rem' }}>
                       <CalendarToday sx={{ color: accent, fontSize: '1.5rem' }} /> {formatDate(event.date)}
                     </Typography>
-                    <Typography sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1.5, fontSize: '1.2rem' }}>
+                    <Typography sx={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 1.5, fontSize: '1.2rem' }}>
                       <LocationOn sx={{ color: accent, fontSize: '1.5rem' }} /> {event.venue}
                     </Typography>
-                    <Typography sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1.5, fontSize: '1.2rem' }}>
+                    <Typography sx={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 1.5, fontSize: '1.2rem' }}>
                       <AttachMoney sx={{ color: accent, fontSize: '1.5rem' }} /> {event.price}
                     </Typography>
                   </Box>

@@ -110,7 +110,7 @@ const Login = () => {
             mb: 4,
           }}
         >
-          <Typography variant="h4" component="h1" align="center" sx={{ color: dark, fontWeight: 700, mb: 2 }}>
+          <Typography variant="h4" component="h1" align="center" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 2 }}>
             Login
           </Typography>
           {error && (
@@ -148,7 +148,7 @@ const Login = () => {
             <EventyButton type="submit" fullWidth sx={{ mt: 3 }}>Login</EventyButton>
           </form>
           <Box sx={{ mt: 2, textAlign: 'center' }}>
-            <Typography variant="body2" sx={{ color: gray }}>
+            <Typography variant="body2" sx={{ color: 'var(--text-secondary)' }}>
               Don't have an account?{' '}
               <Link component={RouterLink} to="/register" sx={{ color: accent, fontWeight: 700 }}>
                 Register here

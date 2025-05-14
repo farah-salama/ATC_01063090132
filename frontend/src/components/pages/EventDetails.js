@@ -277,21 +277,21 @@ const EventDetails = () => {
             ))}
           </Box>
         </Box>
-        <Typography variant="h4" component="h1" align="center" sx={{ color: dark, fontWeight: 700, mb: 2 }}>
+        <Typography variant="h4" component="h1" align="center" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 2 }}>
           {event.name}
         </Typography>
         <Box sx={{ display: 'flex', gap: 3, mb: 3, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Typography sx={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <CalendarToday sx={{ color: accent, fontSize: '1.2rem' }} /> {formatDate(event.date)}
           </Typography>
-          <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Typography sx={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <LocationOn sx={{ color: accent, fontSize: '1.2rem' }} /> {event.venue}
           </Typography>
-          <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Typography sx={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <AttachMoney sx={{ color: accent, fontSize: '1.2rem' }} />{event.price}
           </Typography>
         </Box>
-        <Typography align="center" sx={{ color: gray, mb: 3, fontSize: '1.1rem' }}>
+        <Typography align="center" sx={{ color: 'var(--text-secondary)', mb: 3, fontSize: '1.1rem' }}>
           {event.description}
         </Typography>
         {isBooked ? (
@@ -309,7 +309,7 @@ const EventDetails = () => {
                 mb: 1,
               }}
             />
-            <Typography variant="body2" sx={{ color: gray, mt: 1 }}>
+            <Typography variant="body2" sx={{ color: 'var(--text-secondary)', mt: 1 }}>
               You have successfully booked this event
             </Typography>
           </Box>
@@ -324,7 +324,7 @@ const EventDetails = () => {
         {/* Admin Bookings Section */}
         {isAdmin && (
           <Box sx={{ mt: 6 }}>
-            <Typography variant="h5" sx={{ color: dark, fontWeight: 700, mb: 3 }}>
+            <Typography variant="h5" sx={{ color: 'var(--text-primary)', fontWeight: 700, mb: 3 }}>
               Confirmed Bookings
             </Typography>
             <Box sx={{ mb: 4 }}>
@@ -484,7 +484,7 @@ const EventDetails = () => {
       >
         <DialogTitle sx={{ color: accent, fontWeight: 700 }}>Booking Successful!</DialogTitle>
         <DialogContent>
-          <Typography sx={{ color: gray }}>
+          <Typography sx={{ color: 'var(--text-secondary)' }}>
             You have successfully booked this event. You can view your bookings in the "My Bookings" section.
           </Typography>
         </DialogContent>
