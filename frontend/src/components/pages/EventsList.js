@@ -104,6 +104,9 @@ const fireConfetti = () => {
   }
 };
 
+// Helper to get full image URL
+const getImageUrl = (img) => img?.startsWith('/uploads/') ? `${API_URL}${img}` : img;
+
 const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [bookedEvents, setBookedEvents] = useState([]);
@@ -347,11 +350,11 @@ const EventsList = () => {
                 <CardMedia
                   component="img"
                   height="200"
-                  image={event.image || 'https://via.placeholder.com/400x200'}
+                  image={getImageUrl(event.image) || 'https://via.placeholder.com/400x200'}
                   alt={event.name}
                   sx={{ borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}
                 />
-                <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                <CardContent sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
                   <Box sx={{ mb: 2 }}>
                     {(Array.isArray(event.category) ? event.category : [event.category]).map((cat) => (
                       <Chip
@@ -390,17 +393,33 @@ const EventsList = () => {
                       {event.price}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Box sx={{ display: 'flex', gap: 1, mt: 'auto' }}>
                     <EventyButton
                       onClick={() => handleViewDetails(event._id)}
-                      sx={{ flex: 1 }}
+                      sx={{
+                        flex: 1,
+                        px: 1.5,
+                        py: 1.5,
+                        fontSize: '1rem',
+                        minHeight: 36,
+                        background: 'transparent',
+                        color: accent,
+                        boxShadow: 'none',
+                        border: `1.5px solid ${accent}`,
+                        transition: 'background 0.2s, color 0.2s',
+                        '&:hover': {
+                          background: accent,
+                          color: '#fff',
+                          boxShadow: 'none',
+                        },
+                      }}
                     >
                       View Details
                     </EventyButton>
                     {!isAdmin && !bookedEvents.includes(event._id) && (
                       <EventyButton
                         onClick={() => handleBookNow(event._id)}
-                        sx={{ flex: 1, background: '#23272f', '&:hover': { background: '#181b20' } }}
+                        sx={{ flex: 1, background: '#23272f', '&:hover': { background: '#181b20' }, px: 1.5, py: 0.5, fontSize: '0.95rem', minHeight: 36 }}
                       >
                         Book Now
                       </EventyButton>

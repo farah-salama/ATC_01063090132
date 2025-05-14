@@ -38,6 +38,9 @@ const formatDate = (date) => {
   return `${day}/${month}/${year}`;
 };
 
+// Helper to get full image URL
+const getImageUrl = (img) => img?.startsWith('/uploads/') ? `${API_URL}${img}` : img;
+
 const EventDetails = () => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -234,7 +237,7 @@ const EventDetails = () => {
       >
         <Box sx={{ position: 'relative', mb: 3 }}>
           <img
-            src={event.image || 'https://via.placeholder.com/800x400'}
+            src={getImageUrl(event.image) || 'https://via.placeholder.com/800x400'}
             alt={event.name}
             style={{
               width: '100%',

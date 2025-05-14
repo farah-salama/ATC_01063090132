@@ -30,6 +30,9 @@ const formatDate = (date) => {
   return `${day}/${month}/${year}`;
 };
 
+// Helper to get full image URL
+const getImageUrl = (img) => img?.startsWith('/uploads/') ? `${API_URL}${img}` : img;
+
 const BookedEvents = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -155,7 +158,7 @@ const BookedEvents = () => {
                 >
                   <CardMedia
                     component="img"
-                    image={booking.event.image || 'https://via.placeholder.com/120x120'}
+                    image={getImageUrl(booking.event.image) || 'https://via.placeholder.com/120x120'}
                     alt={booking.event.name}
                     sx={{
                       width: 120,

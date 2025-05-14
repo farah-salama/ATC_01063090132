@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Container,
   Typography,
@@ -67,6 +67,8 @@ const AdminPanel = () => {
     price: '',
     image: '',
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imageUploading, setImageUploading] = useState(false);
 
   useEffect(() => {
     fetchEvents();
@@ -101,6 +103,7 @@ const AdminPanel = () => {
         price: event.price,
         image: event.image,
       });
+      setImageFile(null);
     } else {
       setEditingEvent(null);
       setFormData({
@@ -112,6 +115,7 @@ const AdminPanel = () => {
         price: '',
         image: '',
       });
+      setImageFile(null);
     }
     setOpen(true);
   };
@@ -123,6 +127,31 @@ const AdminPanel = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImageFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    } else {
+      setImageFile(null);
+    }
+  };
+
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    setImageUploading(true);
+    try {
+      const res = await axios.post(`${API_URL}/api/upload`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setImageUploading(false);
+      return res.data.url;
+    } catch (error) {
+      setImageUploading(false);
+      alert('Image upload failed. Please try again.');
+      return '';
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -141,14 +170,22 @@ const AdminPanel = () => {
         return;
       }
 
+      let imageUrl = formData.image;
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+        if (!imageUrl) return;
+      }
+
+      const eventPayload = { ...formData, image: imageUrl };
+
       if (editingEvent) {
-        const response = await axios.put(`${API_URL}/api/events/${editingEvent._id}`, formData);
+        const response = await axios.put(`${API_URL}/api/events/${editingEvent._id}`, eventPayload);
         if (response.data) {
           fetchEvents();
           handleClose();
         }
       } else {
-        const response = await axios.post(`${API_URL}/api/events`, formData);
+        const response = await axios.post(`${API_URL}/api/events`, eventPayload);
         if (response.data) {
           fetchEvents();
           handleClose();
@@ -428,15 +465,39 @@ const AdminPanel = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Image URL"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleChange}
-                    required
-                    sx={{ background: '#f6f6fa', borderRadius: 2 }}
-                  />
+                  <Typography variant="subtitle2" sx={{ color: dark, mb: 1 }}>
+                    Event Image
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, alignItems: 'center' }}>
+                    <input
+                      accept="image/*"
+                      type="file"
+                      onChange={handleImageFileChange}
+                      style={{ display: 'block' }}
+                    />
+                    <Typography sx={{ color: gray, fontSize: '0.95rem' }}>or</Typography>
+                    <TextField
+                      fullWidth
+                      label="Image URL"
+                      name="image"
+                      value={formData.image}
+                      onChange={handleChange}
+                      disabled={!!imageFile}
+                      sx={{ background: '#f6f6fa', borderRadius: 2, flex: 1 }}
+                    />
+                  </Box>
+                  {imageUploading && (
+                    <Typography sx={{ color: accent, mt: 1 }}>Uploading image...</Typography>
+                  )}
+                  {(formData.image || imageFile) && (
+                    <Box sx={{ mt: 2 }}>
+                      <img
+                        src={imageFile ? URL.createObjectURL(imageFile) : formData.image}
+                        alt="Preview"
+                        style={{ maxWidth: 180, maxHeight: 120, borderRadius: 8, boxShadow: cardShadow }}
+                      />
+                    </Box>
+                  )}
                 </Grid>
               </Grid>
             </DialogContent>
