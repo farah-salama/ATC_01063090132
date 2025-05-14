@@ -64,9 +64,41 @@ const getEventById = async (req, res) => {
 // @access  Private/Admin
 const updateEvent = async (req, res) => {
   try {
+    console.log('Received update request with body:', req.body);
+    console.log('Category value:', req.body.category);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     const event = await Event.findById(req.params.id);
     if (!event) {
       return res.status(404).json({ message: 'Event not found' });
+    }
+
+    console.log('Current event categories:', event.category);
+
+    // Ensure category is an array and contains valid values
+    if (req.body.category) {
+      if (!Array.isArray(req.body.category)) {
+        req.body.category = [req.body.category];
+      }
+      
+      console.log('Processed categories:', req.body.category);
+      
+      // Validate categories
+      const validCategories = ['Arts & Entertainment', 'Sports & Outdoors', 'Learning & Career', 'Community & Causes'];
+      const invalidCategories = req.body.category.filter(cat => !validCategories.includes(cat));
+      
+      console.log('Invalid categories found:', invalidCategories);
+      
+      if (invalidCategories.length > 0) {
+        return res.status(400).json({
+          message: 'Invalid categories',
+          errors: [`Invalid categories: ${invalidCategories.join(', ')}. Valid categories are: ${validCategories.join(', ')}`]
+        });
+      }
     }
 
     const updatedEvent = await Event.findByIdAndUpdate(
@@ -74,9 +106,17 @@ const updateEvent = async (req, res) => {
       req.body,
       { new: true, runValidators: true }
     );
+    console.log('Updated event:', updatedEvent);
     res.json(updatedEvent);
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Update event error:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ 
+        message: 'Validation error', 
+        errors: Object.values(error.errors).map(err => err.message)
+      });
+    }
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 

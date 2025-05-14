@@ -235,21 +235,33 @@ const EventDetails = () => {
               boxShadow: cardShadow,
             }}
           />
-          <Chip
-            label={event.category}
+          <Box
             sx={{
               position: 'absolute',
               top: 16,
               right: 16,
-              background: accent,
-              color: '#fff',
-              fontWeight: 600,
-              fontSize: '1rem',
-              borderRadius: '12px',
-              px: 2,
-              py: 1,
+              display: 'flex',
+              gap: 1,
+              flexWrap: 'wrap',
+              justifyContent: 'flex-end',
             }}
-          />
+          >
+            {(Array.isArray(event.category) ? event.category : [event.category]).map((cat) => (
+              <Chip
+                key={cat}
+                label={cat}
+                sx={{
+                  background: accent,
+                  color: '#fff',
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  borderRadius: '12px',
+                  px: 2,
+                  py: 1,
+                }}
+              />
+            ))}
+          </Box>
         </Box>
         <Typography variant="h4" component="h1" align="center" sx={{ color: dark, fontWeight: 700, mb: 2 }}>
           {event.name}

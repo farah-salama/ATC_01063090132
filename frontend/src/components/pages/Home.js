@@ -252,30 +252,44 @@ const Home = () => {
                   />
                 </Box>
                 <CardContent sx={{ flex: 1, p: { xs: 1, sm: 2 }, pl: { xs: 2, sm: 4 } }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 3, flexWrap: 'wrap' }}>
-                    <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <CalendarToday sx={{ color: accent, fontSize: '1.2rem' }} /> {new Date(event.date).toLocaleDateString()}
+                  <Box sx={{ flex: '1 1 auto', p: 2 }}>
+                    <Typography variant="h6" sx={{ color: dark, fontWeight: 700, mb: 1 }}>
+                      {event.name}
                     </Typography>
-                    <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <AccessTime sx={{ color: accent, fontSize: '1.2rem' }} /> 10.00 AM
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
+                      {(Array.isArray(event.category) ? event.category : [event.category]).map((cat) => (
+                        <Chip
+                          key={cat}
+                          label={cat}
+                          size="small"
+                          sx={{
+                            background: accent,
+                            color: '#fff',
+                            fontWeight: 600,
+                            fontSize: '0.8rem',
+                            borderRadius: '8px',
+                          }}
+                        />
+                      ))}
+                    </Box>
+                    <Typography variant="body2" sx={{ color: gray, mb: 2 }}>
+                      {event.description}
                     </Typography>
-                    <Typography sx={{ color: gray, fontWeight: 500, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <LocationOn sx={{ color: accent, fontSize: '1.2rem' }} /> {event.venue}
-                    </Typography>
-                    <Typography sx={{ color: accent, fontWeight: 700, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <AttachMoney sx={{ color: accent, fontSize: '1.2rem' }} /> {event.price}
-                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <Typography sx={{ color: gray, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <CalendarToday sx={{ color: accent, fontSize: '1.1rem' }} />
+                        {new Date(event.date).toLocaleDateString()}
+                      </Typography>
+                      <Typography sx={{ color: gray, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <LocationOn sx={{ color: accent, fontSize: '1.1rem' }} />
+                        {event.venue}
+                      </Typography>
+                      <Typography sx={{ color: gray, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <AttachMoney sx={{ color: accent, fontSize: '1.1rem' }} />
+                        {event.price}
+                      </Typography>
+                    </Box>
                   </Box>
-                  <Typography
-                    variant="h5"
-                    sx={{ color: accent, fontWeight: 600, mb: 1, fontSize: { xs: '1.3rem', sm: '1.7rem' }, cursor: 'pointer', textDecoration: 'none', lineHeight: 1.2 }}
-                    onClick={() => handleViewDetails(event._id)}
-                  >
-                    {event.name}
-                  </Typography>
-                  <Typography sx={{ color: gray, mb: 2, fontSize: '1.08rem', maxWidth: 600 }}>
-                    {event.description}
-                  </Typography>
                   <Box sx={{ mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
                     {isAdmin ? (
                       <Box

@@ -11,6 +11,11 @@ import {
   Paper,
   IconButton,
   Box,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import axios from 'axios';
@@ -20,6 +25,13 @@ import EventyButton from '../common/EventyButton';
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const { accent, dark, gray, cardBg, cardShadow, gradientBg } = theme;
 
+const CATEGORIES = [
+  'Arts & Entertainment',
+  'Sports & Outdoors',
+  'Learning & Career',
+  'Community & Causes'
+];
+
 const AdminPanel = () => {
   const [events, setEvents] = useState([]);
   const [open, setOpen] = useState(false);
@@ -27,7 +39,7 @@ const AdminPanel = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    category: '',
+    category: [],
     date: '',
     venue: '',
     price: '',
@@ -50,10 +62,18 @@ const AdminPanel = () => {
   const handleOpen = (event = null) => {
     if (event) {
       setEditingEvent(event);
+      // Ensure category is always an array and contains valid values
+      const categories = event.category ? 
+        (Array.isArray(event.category) ? event.category : [event.category]) : 
+        [];
+      
+      // Filter out any invalid categories
+      const validCategories = categories.filter(cat => CATEGORIES.includes(cat));
+      
       setFormData({
         name: event.name,
         description: event.description,
-        category: event.category,
+        category: validCategories,
         date: new Date(event.date).toISOString().split('T')[0],
         venue: event.venue,
         price: event.price,
@@ -64,7 +84,7 @@ const AdminPanel = () => {
       setFormData({
         name: '',
         description: '',
-        category: '',
+        category: [],
         date: '',
         venue: '',
         price: '',
@@ -86,15 +106,42 @@ const AdminPanel = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editingEvent) {
-        await axios.put(`${API_URL}/api/events/${editingEvent._id}`, formData);
-      } else {
-        await axios.post(`${API_URL}/api/events`, formData);
+      // Ensure we have at least one category
+      if (!formData.category || formData.category.length === 0) {
+        alert('Please select at least one category');
+        return;
       }
-      fetchEvents();
-      handleClose();
+
+      // Ensure all categories are valid
+      const invalidCategories = formData.category.filter(cat => !CATEGORIES.includes(cat));
+      if (invalidCategories.length > 0) {
+        alert(`Invalid categories: ${invalidCategories.join(', ')}. Please select from the predefined categories.`);
+        return;
+      }
+
+      if (editingEvent) {
+        const response = await axios.put(`${API_URL}/api/events/${editingEvent._id}`, formData);
+        if (response.data) {
+          fetchEvents();
+          handleClose();
+        }
+      } else {
+        const response = await axios.post(`${API_URL}/api/events`, formData);
+        if (response.data) {
+          fetchEvents();
+          handleClose();
+        }
+      }
     } catch (error) {
       console.error('Error saving event:', error);
+      const errorMessage = error.response?.data?.message || 'Error saving event';
+      const validationErrors = error.response?.data?.errors;
+      
+      if (validationErrors) {
+        alert(`Validation errors:\n${validationErrors.join('\n')}`);
+      } else {
+        alert(errorMessage);
+      }
     }
   };
 
@@ -157,7 +204,7 @@ const AdminPanel = () => {
                       {event.name}
                     </Typography>
                     <Typography variant="body2" sx={{ color: gray, fontWeight: 500 }}>
-                      {event.category} • {new Date(event.date).toLocaleDateString()} • ${event.price}
+                      {Array.isArray(event.category) ? event.category.join(', ') : event.category} • {new Date(event.date).toLocaleDateString()} • ${event.price}
                     </Typography>
                   </Box>
                   <Box>
@@ -174,7 +221,11 @@ const AdminPanel = () => {
           ))}
         </Grid>
 
-        <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          maxWidth="md"
+          fullWidth
           PaperProps={{
             sx: {
               background: cardBg,
@@ -215,15 +266,22 @@ const AdminPanel = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    required
-                    sx={{ background: '#f6f6fa', borderRadius: 2 }}
-                  />
+                  <FormControl fullWidth sx={{ background: '#f6f6fa', borderRadius: 2 }}>
+                    <InputLabel>Categories</InputLabel>
+                    <Select
+                      multiple
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      input={<OutlinedInput label="Categories" />}
+                      required
+                    >
+                      {CATEGORIES.map((category) => (
+                        <MenuItem key={category} value={category}>
+                          {category}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
