@@ -201,7 +201,13 @@ const BookedEvents = () => {
                     <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
                       <EventyButton onClick={() => handleViewEvent(booking.event._id)}>View Event</EventyButton>
                       {booking.status === 'confirmed' && (
-                        <EventyButton onClick={() => handleCancelBooking(booking._id)} sx={{ background: accent, '&:hover': { background: dark } }}>Cancel</EventyButton>
+                        <EventyButton
+                          onClick={() => handleCancelBooking(booking._id)}
+                          disabled={new Date(booking.event.date) < new Date()}
+                          sx={{ background: accent, '&:hover': { background: dark }, opacity: new Date(booking.event.date) < new Date() ? 0.7 : 1, cursor: new Date(booking.event.date) < new Date() ? 'not-allowed' : 'pointer' }}
+                        >
+                          Cancel
+                        </EventyButton>
                       )}
                     </Box>
                   </CardContent>

@@ -212,6 +212,8 @@ const EventDetails = () => {
     return null;
   }
 
+  const isEnded = new Date(event.date) < new Date();
+
   return (
     <Box
       sx={{
@@ -311,6 +313,10 @@ const EventDetails = () => {
               You have successfully booked this event
             </Typography>
           </Box>
+        ) : isEnded ? (
+          <EventyButton disabled sx={{ width: '100%', mt: 3, background: gray, color: '#fff', opacity: 0.7, fontWeight: 700, fontSize: '1.1rem', borderRadius: '999px', px: 4, py: 1.2 }}>
+            Ended
+          </EventyButton>
         ) : !isAdmin ? (
           <EventyButton onClick={handleBookNow} sx={{ width: '100%', mt: 3, background: '#23272f', color: '#fff', '&:hover': { background: '#181b20' } }}>Book Now</EventyButton>
         ) : null}

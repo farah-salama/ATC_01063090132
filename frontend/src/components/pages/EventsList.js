@@ -416,13 +416,29 @@ const EventsList = () => {
                     >
                       View Details
                     </EventyButton>
-                    {!isAdmin && !bookedEvents.includes(event._id) && (
-                      <EventyButton
-                        onClick={() => handleBookNow(event._id)}
-                        sx={{ flex: 1, background: '#23272f', '&:hover': { background: '#181b20' }, px: 1.5, py: 0.5, fontSize: '0.95rem', minHeight: 36 }}
-                      >
-                        Book Now
-                      </EventyButton>
+                    {!isAdmin && (
+                      new Date(event.date) < new Date() ? (
+                        <EventyButton
+                          sx={{ flex: 1, background: gray, color: '#fff', cursor: 'not-allowed', opacity: 0.7, px: 1.5, py: 1.5, fontSize: '1rem', minHeight: 36 }}
+                          disabled
+                        >
+                          Ended
+                        </EventyButton>
+                      ) : bookedEvents.includes(event._id) ? (
+                        <EventyButton
+                          sx={{ flex: 1, background: accent, color: '#fff', cursor: 'not-allowed', opacity: 0.7, px: 1.5, py: 1.5, fontSize: '1rem', minHeight: 36 }}
+                          disabled
+                        >
+                          Booked
+                        </EventyButton>
+                      ) : (
+                        <EventyButton
+                          onClick={() => handleBookNow(event._id)}
+                          sx={{ flex: 1, background: '#23272f', '&:hover': { background: '#181b20' }, px: 1.5, py: 1.5, fontSize: '1rem', minHeight: 36 }}
+                        >
+                          Book Now
+                        </EventyButton>
+                      )
                     )}
                   </Box>
                 </CardContent>
