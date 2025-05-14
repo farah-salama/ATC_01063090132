@@ -24,7 +24,20 @@ const createEvent = async (req, res) => {
 // @access  Public
 const getEvents = async (req, res) => {
   try {
-    const events = await Event.find({});
+    const { search } = req.query;
+    let query = {};
+
+    if (search) {
+      query = {
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } },
+          { venue: { $regex: search, $options: 'i' } }
+        ]
+      };
+    }
+
+    const events = await Event.find(query).sort('-createdAt');
     res.json(events);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

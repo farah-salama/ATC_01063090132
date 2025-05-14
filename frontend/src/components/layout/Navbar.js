@@ -10,8 +10,10 @@ import {
   MenuItem,
   IconButton,
   ListItemIcon,
+  TextField,
+  InputAdornment,
 } from '@mui/material';
-import { AccountCircle, ArrowDropDown, EventNote, Logout as LogoutIcon } from '@mui/icons-material';
+import { AccountCircle, ArrowDropDown, EventNote, Logout as LogoutIcon, Search } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import theme from '../theme';
 import EventyButton from '../common/EventyButton';
@@ -22,18 +24,28 @@ const Navbar = () => {
   const { isAuthenticated, isAdmin, logout, user } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const open = Boolean(anchorEl);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleLogout = () => {
     handleClose();
     logout();
     navigate('/');
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
   };
 
   return (
@@ -54,6 +66,51 @@ const Navbar = () => {
           >
             Eventy
           </Typography>
+
+          <Box sx={{ flex: 1, mx: 4, maxWidth: 600 }}>
+            <form onSubmit={handleSearch}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search events by name, description, or venue..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search sx={{ color: accent }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  background: 'rgba(255,255,255,0.95)',
+                  borderRadius: '16px',
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'transparent',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: accent,
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: accent,
+                    },
+                  },
+                  '& .MuiInputBase-input': {
+                    py: 1.5,
+                    px: 2,
+                    fontSize: '1rem',
+                    color: dark,
+                    '&::placeholder': {
+                      color: '#666',
+                      opacity: 0.8,
+                    },
+                  },
+                }}
+              />
+            </form>
+          </Box>
+
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
             {isAuthenticated ? (
               <>

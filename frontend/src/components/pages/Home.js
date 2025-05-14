@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Container,
   Grid,
@@ -30,6 +30,7 @@ const Home = () => {
   const [bookedEvents, setBookedEvents] = useState([]);
   const { isAuthenticated, loading: authLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [bookingLoading, setBookingLoading] = useState(false);
@@ -41,7 +42,15 @@ const Home = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/events`);
+        const searchParams = new URLSearchParams(location.search);
+        const searchQuery = searchParams.get('search');
+        
+        let url = `${API_URL}/api/events`;
+        if (searchQuery) {
+          url += `?search=${encodeURIComponent(searchQuery)}`;
+        }
+        
+        const res = await axios.get(url);
         setEvents(res.data);
       } catch (error) {
         console.error('Error fetching events:', error);
@@ -74,7 +83,7 @@ const Home = () => {
     if (!authLoading) {
       loadData();
     }
-  }, [isAuthenticated, authLoading]);
+  }, [isAuthenticated, authLoading, location.search]);
 
   useEffect(() => {
     if (bookingSuccess && !confettiFired.current) {
