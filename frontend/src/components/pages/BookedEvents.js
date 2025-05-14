@@ -47,7 +47,7 @@ const BookedEvents = () => {
         return;
       }
       if (isAdmin) {
-        navigate('/');
+        navigate('/events');
         return;
       }
       fetchBookings();

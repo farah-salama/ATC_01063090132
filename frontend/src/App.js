@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider, createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Navbar from './components/layout/Navbar';
-import Home from './components/pages/Home';
+import HomePage from './components/pages/HomePage';
+import EventsList from './components/pages/EventsList';
 import EventDetails from './components/pages/EventDetails';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
@@ -33,7 +34,8 @@ function App() {
         <Router>
           <Navbar />
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/events" element={<EventsList />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route

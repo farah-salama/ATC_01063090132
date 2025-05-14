@@ -38,13 +38,13 @@ const Navbar = () => {
   const handleLogout = () => {
     handleClose();
     logout();
-    navigate('/');
+    navigate('/events');
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/?search=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/events?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
