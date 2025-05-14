@@ -82,8 +82,30 @@ const cancelBooking = async (req, res) => {
   }
 };
 
+// @desc    Get bookings for a specific event (admin only)
+// @route   GET /api/bookings/event/:eventId
+// @access  Private/Admin
+const getEventBookings = async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    const bookings = await Booking.find({ 
+      event: req.params.eventId,
+      status: 'confirmed'  // Only get confirmed bookings
+    })
+      .populate('user', 'email name')  // Include name in populated data
+      .sort('-createdAt');
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 module.exports = {
   createBooking,
   getUserBookings,
   cancelBooking,
+  getEventBookings,
 }; 

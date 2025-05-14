@@ -4,8 +4,9 @@ const {
   createBooking,
   getUserBookings,
   cancelBooking,
+  getEventBookings,
 } = require('../controllers/bookingController');
-const { protect } = require('../middleware/auth');
+const { protect, admin } = require('../middleware/auth');
 const { body } = require('express-validator');
 
 // Validation middleware
@@ -20,5 +21,8 @@ router.route('/')
 
 router.route('/:id/cancel')
   .put(protect, cancelBooking);
+
+router.route('/event/:eventId')
+  .get(protect, admin, getEventBookings);
 
 module.exports = router; 

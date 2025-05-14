@@ -11,12 +11,20 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import theme from '../theme';
 import EventyButton from '../common/EventyButton';
-import { CalendarToday, LocationOn, AttachMoney } from '@mui/icons-material';
+import { CalendarToday, LocationOn, AttachMoney, Search } from '@mui/icons-material';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const { accent, dark, gray, cardBg, cardShadow, gradientBg } = theme;
@@ -27,6 +35,8 @@ const EventDetails = () => {
   const [error, setError] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [isBooked, setIsBooked] = useState(false);
+  const [bookings, setBookings] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated, loading: authLoading, isAdmin } = useAuth();
@@ -56,11 +66,25 @@ const EventDetails = () => {
       }
     };
 
+    const fetchEventBookings = async () => {
+      if (isAdmin) {
+        try {
+          const res = await axios.get(`${API_URL}/api/bookings/event/${id}`);
+          setBookings(res.data);
+        } catch (error) {
+          console.error('Error fetching event bookings:', error);
+        }
+      }
+    };
+
     const loadData = async () => {
       setLoading(true);
       await fetchEvent();
       if (isAuthenticated) {
         await checkBookingStatus();
+      }
+      if (isAdmin) {
+        await fetchEventBookings();
       }
       setLoading(false);
     };
@@ -68,7 +92,7 @@ const EventDetails = () => {
     if (!authLoading) {
       loadData();
     }
-  }, [id, isAuthenticated, authLoading]);
+  }, [id, isAuthenticated, authLoading, isAdmin]);
 
   useEffect(() => {
     if (showSuccess && !confettiFired.current) {
@@ -140,6 +164,11 @@ const EventDetails = () => {
       setError(error.response?.data?.message || 'Error booking event');
     }
   };
+
+  const filteredBookings = bookings.filter(booking => 
+    booking.user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    booking.user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (loading || authLoading) {
     return (
@@ -261,6 +290,160 @@ const EventDetails = () => {
         ) : !isAdmin ? (
           <EventyButton onClick={handleBookNow} sx={{ width: '100%', mt: 3, background: '#23272f', color: '#fff', '&:hover': { background: '#181b20' } }}>Book Now</EventyButton>
         ) : null}
+
+        {/* Admin Bookings Section */}
+        {isAdmin && (
+          <Box sx={{ mt: 6 }}>
+            <Typography variant="h5" sx={{ color: dark, fontWeight: 700, mb: 3 }}>
+              Confirmed Bookings
+            </Typography>
+            <Box sx={{ mb: 4 }}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search by name or email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                InputProps={{
+                  startAdornment: <Search sx={{ color: accent, mr: 1 }} />,
+                }}
+                sx={{
+                  background: 'rgba(255,255,255,0.95)',
+                  borderRadius: '16px',
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'transparent',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: accent,
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: accent,
+                    },
+                  },
+                  '& .MuiInputBase-input': {
+                    py: 1.5,
+                    px: 2,
+                    fontSize: '1rem',
+                    color: dark,
+                    '&::placeholder': {
+                      color: gray,
+                      opacity: 0.8,
+                    },
+                  },
+                }}
+              />
+            </Box>
+            <TableContainer 
+              component={Paper} 
+              sx={{ 
+                borderRadius: '24px',
+                boxShadow: '0 4px 24px 0 rgba(80, 80, 180, 0.10)',
+                background: 'rgba(255,255,255,0.95)',
+                border: '1.5px solid #f0f0f0',
+              }}
+            >
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell 
+                      sx={{ 
+                        fontWeight: 700, 
+                        color: dark,
+                        fontSize: '1rem',
+                        py: 2,
+                        borderBottom: '2px solid #f0f0f0',
+                      }}
+                    >
+                      Name
+                    </TableCell>
+                    <TableCell 
+                      sx={{ 
+                        fontWeight: 700, 
+                        color: dark,
+                        fontSize: '1rem',
+                        py: 2,
+                        borderBottom: '2px solid #f0f0f0',
+                      }}
+                    >
+                      Email
+                    </TableCell>
+                    <TableCell 
+                      sx={{ 
+                        fontWeight: 700, 
+                        color: dark,
+                        fontSize: '1rem',
+                        py: 2,
+                        borderBottom: '2px solid #f0f0f0',
+                      }}
+                    >
+                      Booking Date
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredBookings.length === 0 ? (
+                    <TableRow>
+                      <TableCell 
+                        colSpan={3} 
+                        align="center" 
+                        sx={{ 
+                          py: 4, 
+                          color: gray,
+                          fontSize: '1.1rem',
+                        }}
+                      >
+                        No confirmed bookings found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredBookings.map((booking) => (
+                      <TableRow 
+                        key={booking._id}
+                        sx={{
+                          '&:hover': {
+                            background: '#f8f8ff',
+                          },
+                        }}
+                      >
+                        <TableCell 
+                          sx={{ 
+                            color: dark,
+                            fontSize: '1rem',
+                            py: 2,
+                            borderBottom: '1px solid #f0f0f0',
+                          }}
+                        >
+                          {booking.user.name}
+                        </TableCell>
+                        <TableCell 
+                          sx={{ 
+                            color: dark,
+                            fontSize: '1rem',
+                            py: 2,
+                            borderBottom: '1px solid #f0f0f0',
+                          }}
+                        >
+                          {booking.user.email}
+                        </TableCell>
+                        <TableCell 
+                          sx={{ 
+                            color: dark,
+                            fontSize: '1rem',
+                            py: 2,
+                            borderBottom: '1px solid #f0f0f0',
+                          }}
+                        >
+                          {new Date(booking.createdAt).toLocaleDateString()}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        )}
       </Container>
       <Dialog open={showSuccess} onClose={() => setShowSuccess(false)}
         PaperProps={{
