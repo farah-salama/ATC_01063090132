@@ -34,12 +34,15 @@ If you want to run the server locally:
 npm install
 ```
 
-2. Create a `.env` file in the root directory with:
+2. Create a `.env` file in the backend directory with:
 ```
 MONGO_URI=mongodb+srv://eventy_user:2ZS7uxEF6ESNmQ8k@cluster0.muqvv.mongodb.net/Eventy?authSource=admin
 PORT=5000
+JWT_SECRET=AN_EXTREMELY_secret_key
 ```
 or add your mongodb connection string instead of the given one.
+
+You can use `.env.example` as a reference for the required environment variables.
 
 3. Start the server:
 ```bash
